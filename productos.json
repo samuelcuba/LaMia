@@ -18,7 +18,7 @@
     {
         "id": 5,
         "nombre": "Arroz 1kg",
-        "costo": 100,
+        "costo": 120,
         "venta": 180,
         "categoria": "Abarrotes",
         "img": "https://images.unsplash.com/photo-1586201375761-83865001e31c?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
