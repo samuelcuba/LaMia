@@ -33,5 +33,13 @@
         "venta": 180,
         "categoria": "Abarrotes",
         "img": "https://images.unsplash.com/photo-1586201375761-83865001e31c?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+    },
+	{
+        "id": 6,
+        "nombre": "Arroz Saco 100 Lb",
+        "venta": 25000,
+        "categoria": "Abarrotes",
+        "img": "https://images.unsplash.com/photo-1586201375761-83865001e31c?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     }
+	
 ]
