@@ -1,28 +1,16 @@
 [
     {
-        "id": 1,
-        "nombre": "Jabón de Bañar",
-        "venta": 250,
-        "categoria": "Limpieza",
-        "img": "https://images.unsplash.com/photo-1607006344380-b6775a0824a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
-    },
-    {
-        "id": 2,
-        "nombre": "Detergente 1kg",
-        "venta": 450,
-        "categoria": "Limpieza",
-        "img": "https://images.unsplash.com/photo-1583947215250-56c71c9e26ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
-    },
-    {
         "id": 3,
         "nombre": "Pollo Entero",
+        "costo": 450,
         "venta": 550,
-        "categoria": "Carnicería",
+        "categoria": "Carnicer�a",
         "img": "https://images.unsplash.com/photo-1587593810167-a84920ea0781?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     },
     {
         "id": 4,
         "nombre": "Cerveza Nacional",
+        "costo": 100,
         "venta": 200,
         "categoria": "Bebidas",
         "img": "https://images.unsplash.com/photo-1608270586620-248524c67de9?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
@@ -30,16 +18,9 @@
     {
         "id": 5,
         "nombre": "Arroz 1kg",
+        "costo": 100,
         "venta": 180,
         "categoria": "Abarrotes",
         "img": "https://images.unsplash.com/photo-1586201375761-83865001e31c?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
-    },
-	{
-        "id": 6,
-        "nombre": "Arroz Saco 100 Lb",
-        "venta": 25000,
-        "categoria": "Abarrotes",
-        "img": "https://images.unsplash.com/photo-1586201375761-83865001e31c?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     }
-	
 ]
