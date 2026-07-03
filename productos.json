@@ -4,6 +4,7 @@
         "nombre": "Pollo Entero",
         "costo": 450,
         "venta": 550,
+        "existencia": 50,
         "categoria": "Carnicer�a",
         "img": "https://images.unsplash.com/photo-1587593810167-a84920ea0781?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     },
@@ -12,6 +13,7 @@
         "nombre": "Cerveza Nacional",
         "costo": 100,
         "venta": 200,
+        "existencia": 48,
         "categoria": "Bebidas",
         "img": "https://images.unsplash.com/photo-1608270586620-248524c67de9?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     },
@@ -20,6 +22,7 @@
         "nombre": "Arroz 1kg",
         "costo": 120,
         "venta": 180,
+        "existencia": 100,
         "categoria": "Abarrotes",
         "img": "https://images.unsplash.com/photo-1586201375761-83865001e31c?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     }
