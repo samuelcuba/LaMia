@@ -250,7 +250,9 @@
                 return;
             }
 
-            let mensaje = "Hola! Quiero hacer el siguiente pedido en la tienda La Mia:";
+            // %0A es el código para "Enter" (salto de línea) en WhatsApp
+            // * sirve para poner el texto en negrita
+            let mensaje = "¡Hola! ?? Quiero hacer el siguiente pedido en La Mia:%0A%0A";
             let total = 0;
             
             carrito.forEach((item) => {
@@ -259,7 +261,7 @@
                 total += subtotal;
             });
             
-            mensaje += `Total a pagar en efectivo:* ${total} CUP ¿Coordinamos la entrega? `;
+            mensaje += `%0A*Total a pagar en efectivo:* ${total} CUP%0A%0A¿Coordinamos la entrega? ??`;
             btnWhatsApp.href = `https://wa.me/${telefono}?text=${mensaje}`;
         }
 
