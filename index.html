@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Baul Cubano - Tu Tienda Online</title>
+    <title>Tienda La Mia - Tu Tienda Online</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -40,7 +40,7 @@
     <!-- Encabezado -->
     <header class="bg-red-600 text-white shadow-md sticky top-0 z-50">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold">ðŸ‡¨ðŸ‡º Tienda la Mia</h1>
+            <h1 class="text-2xl font-bold">Tienda la Mia</h1>
             <div class="bg-white text-red-600 font-bold py-2 px-4 rounded-full text-sm flex items-center gap-2">
                 <span>?? Carrito: <span id="cart-count">0</span></span>
                 <button onclick="vaciarCarrito()" class="text-red-400 hover:text-red-700 font-bold text-lg leading-none ml-1" title="Vaciar carrito">&times;</button>
@@ -250,7 +250,7 @@
                 return;
             }
 
-            let mensaje = "Hola! Quiero hacer el siguiente pedido en La tienda La Mia:%0A%0A";
+            let mensaje = "Hola! Quiero hacer el siguiente pedido en la tienda La Mia:";
             let total = 0;
             
             carrito.forEach((item) => {
@@ -259,7 +259,7 @@
                 total += subtotal;
             });
             
-            mensaje += `%0A*Total a pagar en efectivo:* ${total} CUP%0A%0A¿Coordinamos la entrega? `;
+            mensaje += `Total a pagar en efectivo:* ${total} CUP ¿Coordinamos la entrega? `;
             btnWhatsApp.href = `https://wa.me/${telefono}?text=${mensaje}`;
         }
 
