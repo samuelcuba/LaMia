@@ -181,7 +181,6 @@
             // 1. GUARDAR VENTA EN SUPABASE
             try {
                 const ventasData = carrito.map(item => {
-                    // Buscamos el costo del producto en el inventario
                     const prod = inventario.find(p => p.id === item.id);
                     const costoUnitario = prod ? (prod.costo || 0) : 0;
                     const totalVenta = item.venta * item.cantidad;
@@ -198,16 +197,22 @@
                 });
 
                 const { error } = await supabaseClient.from('ventas').insert(ventasData);
-                if (error) console.error("Error al guardar venta:", error);
+                
+                // SI HAY UN ERROR, MUESTRA UNA ALERTA ROJA CON EL MOTIVO
+                if (error) {
+                    console.error("Error de Supabase:", error);
+                    alert("No se pudo guardar la venta. Error: " + error.message);
+                }
             } catch(e) {
-                console.error("Error en el registro de venta:", e);
+                console.error("Error en el sistema:", e);
+                alert("Error inesperado al guardar: " + e.message);
             }
 
             // 2. LIMPIAR CARRITO Y ABRIR WHATSAPP
             carrito = [];
             localStorage.removeItem('carritoLaMia');
             actualizarUI();
-            mostrarToast('¡Pedido enviado! Gracias ??');
+            mostrarToast('¡Pedido enviado! Gracias 🎉');
             window.open(linkWhatsApp, '_blank');
             return false;
         }
