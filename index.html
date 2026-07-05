@@ -49,7 +49,7 @@
         // --- CONFIGURACIÓN SUPABASE ---
         const SUPABASE_URL = 'https://xwaodoprvfzzszohyrlh.supabase.co'; // Ej: https://xwaodoprvfzzszohyrlh.supabase.co
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3YW9kb3BydmZ6enN6b2h5cmxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxOTkwMDIsImV4cCI6MjA5ODc3NTAwMn0.2kZkJzLhNh-ANkf4QHFFjMauXONEBZqjOFhSshg_eiA'; // Tu anon key larga
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let inventario = [];
         let carrito = [];
@@ -58,7 +58,7 @@
         // --- CARGAR DESDE SUPABASE ---
         async function cargarInventario() {
             try {
-                const { data, error } = await supabase.from('productos').select('*');
+                const { data, error } = await supabaseClient.from('productos').select('*');
                 if (error) throw error;
                 inventario = data;
 
@@ -130,7 +130,7 @@
             }
 
             // 1. Descontar en Supabase (Tiempo real)
-            const { error } = await supabase.rpc('decrement_stock', { p_id: id, p_qty: 1 });
+            const { error } = await supabaseClient.rpc('decrement_stock', { p_id: id, p_qty: 1 });
             if (error) {
                 mostrarToast('Error al actualizar stock');
                 return;
@@ -157,7 +157,7 @@
             
             // 1. Restaurar stock en Supabase
             for (const item of carrito) {
-                await supabase.rpc('increment_stock', { p_id: item.id, p_qty: item.cantidad });
+                await supabaseClient.rpc('increment_stock', { p_id: item.id, p_qty: item.cantidad });
                 // Restaurar localmente
                 const prod = inventario.find(p => p.id === item.id);
                 if (prod) prod.existencia += item.cantidad;
