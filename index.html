@@ -170,12 +170,40 @@
             mostrarToast('Carrito vaciado, stock restaurado ???');
         }
 
-        function finalizarPedido() {
+        async function finalizarPedido() {
             if (carrito.length === 0) {
                 mostrarToast('Tu carrito está vacío');
                 return false;
             }
+            
             const linkWhatsApp = document.getElementById('whatsapp-btn').href;
+
+            // 1. GUARDAR VENTA EN SUPABASE
+            try {
+                const ventasData = carrito.map(item => {
+                    // Buscamos el costo del producto en el inventario
+                    const prod = inventario.find(p => p.id === item.id);
+                    const costoUnitario = prod ? (prod.costo || 0) : 0;
+                    const totalVenta = item.venta * item.cantidad;
+                    const ganancia = totalVenta - (costoUnitario * item.cantidad);
+
+                    return {
+                        producto: item.nombre,
+                        cantidad: item.cantidad,
+                        precio_venta: item.venta,
+                        costo: costoUnitario,
+                        total_venta: totalVenta,
+                        ganancia: ganancia
+                    };
+                });
+
+                const { error } = await supabaseClient.from('ventas').insert(ventasData);
+                if (error) console.error("Error al guardar venta:", error);
+            } catch(e) {
+                console.error("Error en el registro de venta:", e);
+            }
+
+            // 2. LIMPIAR CARRITO Y ABRIR WHATSAPP
             carrito = [];
             localStorage.removeItem('carritoLaMia');
             actualizarUI();
