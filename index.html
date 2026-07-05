@@ -30,7 +30,7 @@
 
     <section class="bg-gradient-to-r from-red-500 to-yellow-500 text-white py-12 text-center">
         <h2 class="text-4xl font-extrabold mb-2">Todo lo que buscas, en un solo lugar</h2>
-        <p class="text-lg">Pagos en efectivo (CUP) ???? | Entrega a domicilio o punto de encuentro</p>
+        <p class="text-lg">Pagos en efectivo (CUP) &#x1F1E8;&#x1F1FA; | Entrega a domicilio o punto de encuentro</p>
     </section>
 
     <div class="container mx-auto px-4 py-6 flex flex-wrap justify-center gap-3" id="categorias-container"></div>
@@ -46,7 +46,7 @@
     <div id="toast">Producto agregado al carrito ??</div>
 
     <script>
-        // --- CONFIGURACIÓN SUPABASE ---
+        // --- CONFIGURACIÃ“N SUPABASE ---
         const SUPABASE_URL = 'https://xwaodoprvfzzszohyrlh.supabase.co'; // Ej: https://xwaodoprvfzzszohyrlh.supabase.co
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3YW9kb3BydmZ6enN6b2h5cmxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxOTkwMDIsImV4cCI6MjA5ODc3NTAwMn0.2kZkJzLhNh-ANkf4QHFFjMauXONEBZqjOFhSshg_eiA'; // Tu anon key larga
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -62,7 +62,7 @@
                 if (error) throw error;
                 inventario = data;
 
-                // Si hay carrito guardado, restaurarlo (no descontamos de la BD porque ya se descontó al comprar antes)
+                // Si hay carrito guardado, restaurarlo (no descontamos de la BD porque ya se descontÃ³ al comprar antes)
                 const carritoGuardado = localStorage.getItem('carritoLaMia');
                 if (carritoGuardado) {
                     carrito = JSON.parse(carritoGuardado);
@@ -172,14 +172,14 @@
 
         function finalizarPedido() {
             if (carrito.length === 0) {
-                mostrarToast('Tu carrito está vacío');
+                mostrarToast('Tu carrito estÃ¡ vacÃ­o');
                 return false;
             }
             const linkWhatsApp = document.getElementById('whatsapp-btn').href;
             carrito = [];
             localStorage.removeItem('carritoLaMia');
             actualizarUI();
-            mostrarToast('¡Pedido enviado! Gracias ??');
+            mostrarToast('Â¡Pedido enviado! Gracias ??');
             window.open(linkWhatsApp, '_blank');
             return false;
         }
@@ -189,19 +189,19 @@
             document.getElementById('cart-count').innerText = totalItems;
             localStorage.setItem('carritoLaMia', JSON.stringify(carrito));
 
-            let telefono = "5352164100"; // TU NÚMERO
+            let telefono = "5352164100"; // TU NÃšMERO
             let btnWhatsApp = document.getElementById('whatsapp-btn');
 
             if (carrito.length === 0) { btnWhatsApp.href = "#"; return; }
 
-            let mensaje = "¡Hola! ?? Quiero hacer el siguiente pedido en La Mia:%0A%0A";
+            let mensaje = "Â¡Hola! ?? Quiero hacer el siguiente pedido en La Mia:%0A%0A";
             let total = 0;
             carrito.forEach((item) => {
                 const subtotal = item.venta * item.cantidad;
                 mensaje += `*${item.cantidad}x* ${item.nombre} - ${subtotal} CUP%0A`;
                 total += subtotal;
             });
-            mensaje += `%0A*Total a pagar en efectivo:* ${total} CUP%0A%0A¿Coordinamos la entrega? ??`;
+            mensaje += `%0A*Total a pagar en efectivo:* ${total} CUP%0A%0AÂ¿Coordinamos la entrega? ??`;
             btnWhatsApp.href = `https://wa.me/${telefono}?text=${mensaje}`;
         }
 
