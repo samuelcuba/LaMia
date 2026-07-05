@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Mia - Tu Tienda Online </title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Incluir Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .card-hover:hover { transform: translateY(-5px); transition: 0.3s; }
-        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 100; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
-    </style>
-</head>
+    <!-- Encabezado -->
+    <header class="bg-red-600 text-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">&#x1F1E8;&#x1F1FA; La Mia</h1>
+            
+            <div class="flex items-center gap-3">
+                <!-- Interruptor de Moneda -->
+                <div class="bg-white text-red-600 font-bold py-1 px-2 rounded-full text-xs flex">
+                    <button onclick="cambiarMoneda('CUP')" id="btn-cup" class="px-3 py-1 bg-red-600 text-white rounded-full">CUP</button>
+                    <button onclick="cambiarMoneda('USD')" id="btn-usd" class="px-3 py-1 text-red-600">USD</button>
+                </div>
+                
+                <!-- Carrito -->
+                <div class="bg-white text-red-600 font-bold py-2 px-4 rounded-full text-sm flex items-center gap-2">
+                    <span>🛒 <span id="cart-count">0</span></span>
+                    <button onclick="vaciarCarrito()" class="text-red-400 hover:text-red-700 font-bold text-lg leading-none ml-1" title="Vaciar carrito">&times;</button>
+                </div>
+            </div>
+        </div>
+    </header>
 <body class="bg-gray-100 text-gray-800">
     <!-- Encabezado -->
     <header class="bg-red-600 text-white shadow-md sticky top-0 z-50">
@@ -55,6 +59,37 @@
         let inventario = [];
         let carrito = [];
         let categoriaActual = "Todos";
+		let monedaActual = "CUP";
+        const TASA_USD = 660; // <--- AQUÍ PONES LA TASA DE CAMBIO ACTUAL (1 USD = 320 CUP)
+
+        function cambiarMoneda(moneda) {
+            monedaActual = moneda;
+            
+            // Cambiar el diseño de los botones
+            if(moneda === 'CUP') {
+                document.getElementById('btn-cup').classList.add('bg-red-600', 'text-white', 'rounded-full');
+                document.getElementById('btn-cup').classList.remove('text-red-600');
+                document.getElementById('btn-usd').classList.remove('bg-red-600', 'text-white', 'rounded-full');
+                document.getElementById('btn-usd').classList.add('text-red-600');
+            } else {
+                document.getElementById('btn-usd').classList.add('bg-red-600', 'text-white', 'rounded-full');
+                document.getElementById('btn-usd').classList.remove('text-red-600');
+                document.getElementById('btn-cup').classList.remove('bg-red-600', 'text-white', 'rounded-full');
+                document.getElementById('btn-cup').classList.add('text-red-600');
+            }
+
+            // Volver a dibujar los productos y el carrito con la nueva moneda
+            renderizarProductos();
+            actualizarUI();
+        }
+
+        function formatearPrecio(precioCUP) {
+            if (monedaActual === 'USD') {
+                // Se redondea hacia arriba para no perder centavos (ej: 400 CUP / 320 = 1.25 -> $2 USD)
+                return `$${Math.ceil(precioCUP / TASA_USD)} USD`; 
+            }
+            return `${precioCUP} CUP`;
+        }
 
         // --- CARGAR DESDE SUPABASE ---
         async function cargarInventario() {
@@ -113,7 +148,7 @@
                             <span class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full">${producto.categoria}</span>
                             <h3 class="font-bold text-lg mt-2">${producto.nombre}</h3>
                             <p class="text-sm text-gray-500 mb-1">Disponibles: ${sinStock ? '0' : stock}</p>
-                            <p class="text-2xl font-extrabold text-red-600 my-2">${producto.venta} CUP</p>
+                            <p class="text-2xl font-extrabold text-red-600 my-2">${formatearPrecio(producto.venta)}</p>
                             <button onclick="agregarCarrito(${producto.id})" ${sinStock ? 'disabled' : ''} class="w-full font-bold py-2 rounded-lg transition ${sinStock ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700'}">
                                 ${sinStock ? 'Agotado' : 'Agregar al Carrito'}
                             </button>
@@ -235,14 +270,20 @@
 
             if (carrito.length === 0) { btnWhatsApp.href = "#"; return; }
 
-            let mensaje = "¡Hola! ?? Quiero hacer el siguiente pedido en La Mia:%0A%0A";
-            let total = 0;
+            let mensaje = "¡Hola! 🛒 Quiero hacer el siguiente pedido en La Mia:%0A%0A";
+            let totalCUP = 0;
+            
             carrito.forEach((item) => {
-                const subtotal = item.venta * item.cantidad;
-                mensaje += `*${item.cantidad}x* ${item.nombre} - ${subtotal} CUP%0A`;
-                total += subtotal;
+                const subtotalCUP = item.venta * item.cantidad;
+                totalCUP += subtotalCUP;
+                
+                // Formatear el precio según la moneda elegida
+                const subtotalTexto = monedaActual === 'USD' ? `$${Math.ceil(subtotalCUP / TASA_USD)} USD` : `${subtotalCUP} CUP`;
+                mensaje += `*${item.cantidad}x* ${item.nombre} - ${subtotalTexto}%0A`;
             });
-            mensaje += `%0A*Total a pagar en efectivo:* ${total} CUP%0A%0A¿Coordinamos la entrega? ??`;
+            
+            const totalTexto = monedaActual === 'USD' ? `$${Math.ceil(totalCUP / TASA_USD)} USD` : `${totalCUP} CUP`;
+            mensaje += `%0A*Total a pagar en efectivo:* ${totalTexto}%0A%0A¿Coordinamos la entrega? 🚚`;
             btnWhatsApp.href = `https://wa.me/${telefono}?text=${mensaje}`;
         }
 
