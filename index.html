@@ -80,8 +80,9 @@
         let carrito = [];
         let categoriaActual = "Todos";
         let monedaActual = "CUP";
-        let textoBusqueda = ""; // Variable para la búsqueda
-        const TASA_USD = 660; // Tasa de cambio fija (luego la cambiamos por la API de elToque)
+        let textoBusqueda = ""; 
+        const TASA_USD = 660; 
+        let timeoutBusqueda = null; // Variable para el retraso de la búsqueda
 
         function cambiarMoneda(moneda) {
             monedaActual = moneda;
@@ -149,29 +150,31 @@
             renderizarProductos();
         }
 
+        // --- RENDERIZAR PRODUCTOS OPTIMIZADO ---
         function renderizarProductos() {
             const container = document.getElementById('productos-container');
-            container.innerHTML = '';
             
-            // Filtrar primero por categoría
+            // 1. Filtrar primero por categoría
             let productosAMostrar = categoriaActual === "Todos" ? inventario : inventario.filter(p => p.categoria === categoriaActual);
             
-            // Luego filtrar por texto de búsqueda
+            // 2. Luego filtrar por texto de búsqueda
             if (textoBusqueda.trim() !== "") {
                 productosAMostrar = productosAMostrar.filter(p => p.nombre.toLowerCase().includes(textoBusqueda.toLowerCase()));
             }
 
-            // Si no hay resultados
+            // 3. Si no hay resultados
             if(productosAMostrar.length === 0) {
                 container.innerHTML = "<p class='text-center text-gray-500 col-span-full text-xl font-semibold mt-10'>No se encontraron productos... 🤔</p>";
                 return;
             }
 
+            // 4. Construir todo el HTML en memoria (esto es lo que hace que vuele)
+            let htmlAcumulado = '';
             productosAMostrar.forEach(producto => {
                 const stock = producto.existencia !== undefined ? producto.existencia : 99;
                 const sinStock = stock <= 0;
 
-                container.innerHTML += `
+                htmlAcumulado += `
                     <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover ${sinStock ? 'opacity-50' : ''}">
                         <img src="${producto.img}" alt="${producto.nombre}" loading="lazy" class="w-full h-40 object-cover">
                         <div class="p-4">
@@ -186,12 +189,19 @@
                     </div>
                 `;
             });
+
+            // 5. Inyectar todo el HTML de golpe en el DOM
+            container.innerHTML = htmlAcumulado;
         }
 
-        // Evento para cuando el cliente escribe en el buscador
+        // --- EVENTO DE BÚSQUEDA CON RETRASO (DEBOUNCE) ---
         document.getElementById('input-buscar').addEventListener('input', function(e) {
-            textoBusqueda = e.target.value;
-            renderizarProductos();
+            clearTimeout(timeoutBusqueda);
+            // Esperamos 250ms a que el usuario deje de escribir para buscar
+            timeoutBusqueda = setTimeout(() => {
+                textoBusqueda = e.target.value;
+                renderizarProductos();
+            }, 250);
         });
 
         async function agregarCarrito(id) {
