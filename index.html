@@ -19,6 +19,14 @@
 </head>
 <body class="bg-gray-100 text-gray-800">
 
+    <!-- Pantalla de Mantenimiento -->
+    <div id="pantalla-mantenimiento" class="hidden fixed inset-0 bg-gray-900 text-white z-[100] flex flex-col items-center justify-center p-6 text-center">
+        <div class="text-7xl mb-6 animate-bounce">🛠️</div>
+        <h1 class="text-4xl font-extrabold text-yellow-500 mb-4">Mantenimiento Programado</h1>
+        <p class="text-xl text-gray-300 max-w-md mb-6">Estamos actualizando nuestro inventario para ofrecerte los mejores productos. ¡Volveremos pronto!</p>
+        <p class="text-gray-500">La Mia &#x1F1E8;&#x1F1FA;</p>
+    </div>
+
     <!-- Encabezado -->
     <header class="bg-red-600 text-white shadow-md sticky top-0 z-50">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -68,7 +76,7 @@
         let carrito = [];
         let categoriaActual = "Todos";
         let monedaActual = "CUP";
-        const TASA_USD = 660; // Tasa de cambio fija por ahora (luego la cambiamos por la API de elToque)
+        const TASA_USD = 660; // Tasa de cambio fija (luego la cambiamos por la API de elToque)
 
         function cambiarMoneda(moneda) {
             monedaActual = moneda;
@@ -229,7 +237,7 @@
                         costo: costoUnitario,
                         total_venta: totalVenta,
                         ganancia: ganancia,
-                        moneda: monedaActual // <--- AGREGA ESTA LÍNEA
+                        moneda: monedaActual
                     };
                 });
 
@@ -288,7 +296,24 @@
             setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
-        window.onload = cargarInventario;
+        // --- INICIALIZACIÓN: REVISAR MANTENIMIENTO ---
+        window.onload = async function() {
+            try {
+                // Preguntar a Supabase si el mantenimiento está activo
+                const { data, error } = await supabaseClient.from('ajustes').select('mantenimiento').eq('id', 1).single();
+                
+                if (data && data.mantenimiento === true) {
+                    // Si está en true, mostramos la pantalla de mantenimiento
+                    document.getElementById('pantalla-mantenimiento').classList.remove('hidden');
+                } else {
+                    // Si está en false, cargamos la tienda normal
+                    cargarInventario();
+                }
+            } catch (error) {
+                // Si por algún error no puede conectar, cargamos la tienda normal
+                cargarInventario();
+            }
+        };
     </script>
 </body>
 </html>
