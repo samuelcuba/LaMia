@@ -147,7 +147,7 @@
 
                 container.innerHTML += `
                     <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover ${sinStock ? 'opacity-50' : ''}">
-                        <img src="${producto.img}" alt="${producto.nombre}" class="w-full h-40 object-cover">
+                        <img src="${producto.img}" alt="${producto.nombre}" loading="lazy" class="w-full h-40 object-cover">
                         <div class="p-4">
                             <span class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full">${producto.categoria}</span>
                             <h3 class="font-bold text-lg mt-2">${producto.nombre}</h3>
