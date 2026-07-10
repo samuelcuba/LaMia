@@ -82,7 +82,7 @@
         let monedaActual = "CUP";
         let textoBusqueda = ""; 
         const TASA_USD = 660; 
-        let timeoutBusqueda = null; // Variable para el retraso de la búsqueda
+        let timeoutBusqueda = null; 
 
         function cambiarMoneda(moneda) {
             monedaActual = moneda;
@@ -157,22 +157,25 @@
             // 1. Filtrar primero por categoría
             let productosAMostrar = categoriaActual === "Todos" ? inventario : inventario.filter(p => p.categoria === categoriaActual);
             
-            // 2. Luego filtrar por texto de búsqueda
+            // 2. Filtrar productos AGOTADOS (Solo mostrar los que tienen existencia > 0)
+            productosAMostrar = productosAMostrar.filter(p => p.existencia > 0);
+
+            // 3. Luego filtrar por texto de búsqueda
             if (textoBusqueda.trim() !== "") {
                 productosAMostrar = productosAMostrar.filter(p => p.nombre.toLowerCase().includes(textoBusqueda.toLowerCase()));
             }
 
-            // 3. Si no hay resultados
+            // 4. Si no hay resultados
             if(productosAMostrar.length === 0) {
                 container.innerHTML = "<p class='text-center text-gray-500 col-span-full text-xl font-semibold mt-10'>No se encontraron productos... 🤔</p>";
                 return;
             }
 
-            // 4. Construir todo el HTML en memoria (esto es lo que hace que vuele)
+            // 5. Construir todo el HTML en memoria
             let htmlAcumulado = '';
             productosAMostrar.forEach(producto => {
                 const stock = producto.existencia !== undefined ? producto.existencia : 99;
-                const sinStock = stock <= 0;
+                const sinStock = stock <= 0; // Esto ya no debería pasar por el filtro de arriba, pero lo dejamos por seguridad
 
                 htmlAcumulado += `
                     <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover ${sinStock ? 'opacity-50' : ''}">
@@ -190,14 +193,13 @@
                 `;
             });
 
-            // 5. Inyectar todo el HTML de golpe en el DOM
+            // 6. Inyectar todo el HTML de golpe en el DOM
             container.innerHTML = htmlAcumulado;
         }
 
         // --- EVENTO DE BÚSQUEDA CON RETRASO (DEBOUNCE) ---
         document.getElementById('input-buscar').addEventListener('input', function(e) {
             clearTimeout(timeoutBusqueda);
-            // Esperamos 250ms a que el usuario deje de escribir para buscar
             timeoutBusqueda = setTimeout(() => {
                 textoBusqueda = e.target.value;
                 renderizarProductos();
