@@ -87,25 +87,20 @@
         // --- FUNCIÓN PARA OBENER LA TASA DEL ELTOQUE ---
         async function obtenerTasaElToque() {
             try {
-                const response = await fetch('https://api.eltoque.com/v1/tcg/today', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc4MzYyNDEwNCwianRpIjoiYjdiYTcyOTUtNWVhNC00YWMxLTkzNDItOGZlNDdmZGMwMGQyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjZhNGFhNjRlNmNhMjY5OGE5NjRkNTlmZSIsIm5iZiI6MTc4MzYyNDEwNH0.l04tqLs51_0Xjj7mnGFmli1PxcpHOn-Q-qZppmALcV8'
-                    }
-                });
+                // Usamos el puente de Google para evitar el bloqueo CORS
+                const response = await fetch('PEGA_AQUI_URL_DE_GOOGLE');
                 
-                if (!response.ok) throw new Error("Error en la respuesta de elToque");
+                if (!response.ok) throw new Error("Error en el puente de Google");
                 
-                const data = await response.json();
-                const tasa = data.usd || data.USD || data.tasa || data.tcg?.usd || data.rate;
+                const tasaText = await response.text();
+                const tasa = parseFloat(tasaText);
                 
                 if (tasa && !isNaN(tasa)) {
-                    TASA_USD = Math.round(tasa);
+                    TASA_USD = tasa;
                     console.log("Tasa elToque aplicada:", TASA_USD);
                 }
             } catch (error) {
-                console.log("elToque bloqueó el acceso directo. Usando tasa de respaldo (660).");
-                // Aquí no necesitamos hacer nada, TASA_USD ya es 660 por defecto
+                console.log("No se pudo obtener la tasa. Usando respaldo (660):", error);
             }
         }
 
