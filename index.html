@@ -88,7 +88,7 @@
         async function obtenerTasaElToque() {
             try {
                 // Usamos el puente de Google para evitar el bloqueo CORS
-                const response = await fetch('PEGA_AQUI_URL_DE_GOOGLE');
+                const response = await fetch('https://script.google.com/macros/s/AKfycbytGdTM_q4FvUMj-1R7rZ4CqVI9_idImm6CJRqBTT04NQpN7mdy_GT_HQdcAT-U24pi/exec');
                 
                 if (!response.ok) throw new Error("Error en el puente de Google");
                 
