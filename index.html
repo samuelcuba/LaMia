@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Mia - Tu Tienda Online</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Configuración PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#dc2626">
     <link rel="apple-touch-icon" href="https://api.iconify.design/fluent-emoji-flat-shopping-cart.svg?color=%23dc2626&width=192">
@@ -23,7 +20,6 @@
 </head>
 <body class="bg-gray-100 text-gray-800">
 
-    <!-- Pantalla de Mantenimiento -->
     <div id="pantalla-mantenimiento" class="hidden fixed inset-0 bg-gray-900 text-white z-[100] flex flex-col items-center justify-center p-6 text-center">
         <div class="text-7xl mb-6 animate-bounce">🛠️</div>
         <h1 class="text-4xl font-extrabold text-yellow-500 mb-4">Mantenimiento Programado</h1>
@@ -31,17 +27,14 @@
         <p class="text-gray-500">La Mia &#x1F1E8;&#x1F1FA;</p>
     </div>
 
-    <!-- Encabezado -->
     <header class="bg-red-600 text-white shadow-md sticky top-0 z-50">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <h1 class="text-2xl font-bold">&#x1F1E8;&#x1F1FA; La Mia</h1>
-            
             <div class="flex items-center gap-3">
                 <div class="bg-white text-red-600 font-bold py-1 px-2 rounded-full text-xs flex">
                     <button onclick="cambiarMoneda('CUP')" id="btn-cup" class="px-3 py-1 bg-red-600 text-white rounded-full">CUP</button>
                     <button onclick="cambiarMoneda('USD')" id="btn-usd" class="px-3 py-1 text-red-600">USD</button>
                 </div>
-                
                 <div class="bg-white text-red-600 font-bold py-2 px-4 rounded-full text-sm flex items-center gap-2">
                     <span>🛒 <span id="cart-count">0</span></span>
                     <button onclick="vaciarCarrito()" class="text-red-400 hover:text-red-700 font-bold text-lg leading-none ml-1" title="Vaciar carrito">&times;</button>
@@ -62,7 +55,12 @@
 
     <main class="container mx-auto px-4 py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="productos-container"></main>
 
-    <!-- Botón Flotante de WhatsApp -->
+    <!-- BARRA DE CUPÓN (NUEVA) -->
+    <div id="cupon-bar" class="hidden fixed bottom-24 right-6 bg-white p-2 rounded-lg shadow-lg z-50 flex items-center gap-2 border-2 border-purple-500">
+        <input type="text" id="input-cupon" placeholder="Código cupón" class="p-1 text-sm border rounded w-28 focus:outline-none">
+        <button onclick="aplicarCupon()" class="bg-purple-600 text-white px-2 py-1 text-sm rounded font-bold">OK</button>
+    </div>
+
     <a href="#" id="whatsapp-btn" onclick="return finalizarPedido(event)" class="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 z-50 flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
             <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.493.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.929 4.664c-.004 3.626-2.962 6.584-6.59 6.584zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.629.775-.114.133-.232.148-.43.05-.197-.099-.836-.308-1.592-.985-.59-.523-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.132.065-.246.033-.346-.033-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.837.328 1.122.421.473.151.904.129 1.246.08.38-.058 1.171-.479 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
@@ -76,248 +74,72 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3YW9kb3BydmZ6enN6b2h5cmxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxOTkwMDIsImV4cCI6MjA5ODc3NTAwMn0.2kZkJzLhNh-ANkf4QHFFjMauXONEBZqjOFhSshg_eiA';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let inventario = [];
-        let carrito = [];
-        let categoriaActual = "Todos";
-        let monedaActual = "CUP";
-        let textoBusqueda = ""; 
-        let TASA_USD = 660; 
-        let timeoutBusqueda = null; 
+        let inventario = [], carrito = [], categoriaActual = "Todos", monedaActual = "CUP", textoBusqueda = "", TASA_USD = 660, timeoutBusqueda = null;
+        let canalPedido = 'whatsapp', telegramUser = '';
+        let cuponAplicado = null, descuento = 0; // NUEVAS VARIABLES PARA CUPONES
 
-        async function obtenerTasaElToque() {
-            try {
-                const { data, error } = await supabaseClient.from('ajustes').select('tasa_usd').eq('id', 1).single();
-                if (data && data.tasa_usd) {
-                    TASA_USD = Math.round(data.tasa_usd);
-                    console.log("Tasa cargada desde el panel:", TASA_USD);
-                }
-            } catch (error) {
-                console.log("No se pudo cargar la tasa. Usando respaldo (660).");
-            }
-        }
+        async function obtenerTasaElToque() { try { const { data } = await supabaseClient.from('ajustes').select('tasa_usd').eq('id', 1).single(); if (data && data.tasa_usd) TASA_USD = Math.round(data.tasa_usd); } catch (e) {} }
+        async function cargarConfigPedido() { const { data } = await supabaseClient.from('ajustes').select('canal_pedido, telegram_user').eq('id', 1).single(); if (data) { canalPedido = data.canal_pedido || 'whatsapp'; telegramUser = data.telegram_user || ''; } }
 
-        function cambiarMoneda(moneda) {
-            monedaActual = moneda;
-            if(moneda === 'CUP') {
-                document.getElementById('btn-cup').classList.add('bg-red-600', 'text-white', 'rounded-full');
-                document.getElementById('btn-cup').classList.remove('text-red-600');
-                document.getElementById('btn-usd').classList.remove('bg-red-600', 'text-white', 'rounded-full');
-                document.getElementById('btn-usd').classList.add('text-red-600');
-            } else {
-                document.getElementById('btn-usd').classList.add('bg-red-600', 'text-white', 'rounded-full');
-                document.getElementById('btn-usd').classList.remove('text-red-600');
-                document.getElementById('btn-cup').classList.remove('bg-red-600', 'text-white', 'rounded-full');
-                document.getElementById('btn-cup').classList.add('text-red-600');
-            }
-            renderizarProductos();
-            actualizarUI();
-        }
+        function cambiarMoneda(m) { monedaActual = m; if(m === 'CUP') { document.getElementById('btn-cup').classList.add('bg-red-600', 'text-white', 'rounded-full'); document.getElementById('btn-cup').classList.remove('text-red-600'); document.getElementById('btn-usd').classList.remove('bg-red-600', 'text-white', 'rounded-full'); document.getElementById('btn-usd').classList.add('text-red-600'); } else { document.getElementById('btn-usd').classList.add('bg-red-600', 'text-white', 'rounded-full'); document.getElementById('btn-usd').classList.remove('text-red-600'); document.getElementById('btn-cup').classList.remove('bg-red-600', 'text-white', 'rounded-full'); document.getElementById('btn-cup').classList.add('text-red-600'); } renderizarProductos(); actualizarUI(); }
+        function formatearPrecio(p) { if (monedaActual === 'USD') return `$${Math.ceil(p / TASA_USD)} USD`; return `${p} CUP`; }
 
-        function formatearPrecio(precioCUP) {
-            if (monedaActual === 'USD') return `$${Math.ceil(precioCUP / TASA_USD)} USD`; 
-            return `${precioCUP} CUP`;
-        }
-
-        async function cargarInventario() {
-            try {
-                const { data, error } = await supabaseClient.from('productos').select('*');
-                if (error) throw error;
-                inventario = data;
-                const carritoGuardado = localStorage.getItem('carritoLaMia');
-                if (carritoGuardado) carrito = JSON.parse(carritoGuardado);
-                renderizarCategorias();
-                renderizarProductos();
-                actualizarUI();
-            } catch (error) {
-                console.error("Error:", error);
-                document.getElementById('productos-container').innerHTML = "<p class='text-center text-red-600 col-span-full'>Error al conectar con la base de datos.</p>";
-            }
-        }
-
-        function renderizarCategorias() {
-            const categorias = ["Todos", ...new Set(inventario.map(p => p.categoria))];
-            const catContainer = document.getElementById('categorias-container');
-            catContainer.innerHTML = '';
-            categorias.forEach(cat => {
-                catContainer.innerHTML += `
-                    <button onclick="filtrarCategoria('${cat}')" class="px-4 py-2 rounded-full font-semibold transition ${cat === categoriaActual ? 'bg-red-600 text-white' : 'bg-white text-red-600 border border-red-600 hover:bg-red-100'}">
-                        ${cat}
-                    </button>
-                `;
-            });
-        }
-
-        function filtrarCategoria(cat) {
-            categoriaActual = cat;
-            renderizarCategorias();
-            renderizarProductos();
-        }
+        async function cargarInventario() { try { const { data, error } = await supabaseClient.from('productos').select('*'); if (error) throw error; inventario = data; const cG = localStorage.getItem('carritoLaMia'); if (cG) carrito = JSON.parse(cG); renderizarCategorias(); renderizarProductos(); actualizarUI(); } catch (e) { document.getElementById('productos-container').innerHTML = "<p class='text-center text-red-600 col-span-full'>Error.</p>"; } }
+        function renderizarCategorias() { const c = ["Todos", ...new Set(inventario.map(p => p.categoria))]; const t = document.getElementById('categorias-container'); t.innerHTML = ''; c.forEach(cat => { t.innerHTML += `<button onclick="filtrarCategoria('${cat}')" class="px-4 py-2 rounded-full font-semibold transition ${cat === categoriaActual ? 'bg-red-600 text-white' : 'bg-white text-red-600 border border-red-600 hover:bg-red-100'}">${cat}</button>`; }); }
+        function filtrarCategoria(c) { categoriaActual = c; renderizarCategorias(); renderizarProductos(); }
 
         function renderizarProductos() {
-            const container = document.getElementById('productos-container');
-            let productosAMostrar = categoriaActual === "Todos" ? inventario : inventario.filter(p => p.categoria === categoriaActual);
-            productosAMostrar = productosAMostrar.filter(p => p.existencia > 0);
-            if (textoBusqueda.trim() !== "") {
-                productosAMostrar = productosAMostrar.filter(p => p.nombre.toLowerCase().includes(textoBusqueda.toLowerCase()));
-            }
-            if(productosAMostrar.length === 0) {
-                container.innerHTML = "<p class='text-center text-gray-500 col-span-full text-xl font-semibold mt-10'>No se encontraron productos... 🤔</p>";
-                return;
-            }
-            let htmlAcumulado = '';
-            productosAMostrar.forEach(producto => {
-                const stock = producto.existencia !== undefined ? producto.existencia : 99;
-                const sinStock = stock <= 0; 
-                htmlAcumulado += `
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover ${sinStock ? 'opacity-50' : ''}">
-                        <img src="${producto.img}" alt="${producto.nombre}" loading="lazy" class="w-full h-40 object-cover">
-                        <div class="p-4">
-                            <span class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full">${producto.categoria}</span>
-                            <h3 class="font-bold text-lg mt-2">${producto.nombre}</h3>
-                            <p class="text-sm text-gray-500 mb-1">Disponibles: ${sinStock ? '0' : stock}</p>
-                            <p class="text-2xl font-extrabold text-red-600 my-2">${formatearPrecio(producto.venta)}</p>
-                            <button onclick="agregarCarrito(${producto.id})" ${sinStock ? 'disabled' : ''} class="w-full font-bold py-2 rounded-lg transition ${sinStock ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700'}">
-                                ${sinStock ? 'Agotado' : 'Agregar al Carrito'}
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = htmlAcumulado;
+            const c = document.getElementById('productos-container'); let pM = categoriaActual === "Todos" ? inventario : inventario.filter(p => p.categoria === categoriaActual); pM = pM.filter(p => p.existencia > 0);
+            if (textoBusqueda.trim() !== "") pM = pM.filter(p => p.nombre.toLowerCase().includes(textoBusqueda.toLowerCase()));
+            if(pM.length === 0) return c.innerHTML = "<p class='text-center text-gray-500 col-span-full text-xl font-semibold mt-10'>No se encontraron productos... 🤔</p>";
+            let h = ''; pM.forEach(p => { const s = p.existencia !== undefined ? p.existencia : 99, sS = s <= 0; h += `<div class="bg-white rounded-xl shadow-md overflow-hidden card-hover ${sS ? 'opacity-50' : ''}"><img src="${p.img}" alt="${p.nombre}" loading="lazy" class="w-full h-40 object-cover"><div class="p-4"><span class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full">${p.categoria}</span><h3 class="font-bold text-lg mt-2">${p.nombre}</h3><p class="text-sm text-gray-500 mb-1">Disponibles: ${sS ? '0' : s}</p><p class="text-2xl font-extrabold text-red-600 my-2">${formatearPrecio(p.venta)}</p><button onclick="agregarCarrito(${p.id})" ${sS ? 'disabled' : ''} class="w-full font-bold py-2 rounded-lg transition ${sS ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700'}">${sS ? 'Agotado' : 'Agregar'}</button></div></div>`; });
+            c.innerHTML = h;
         }
 
-        document.getElementById('input-buscar').addEventListener('input', function(e) {
-            clearTimeout(timeoutBusqueda);
-            timeoutBusqueda = setTimeout(() => {
-                textoBusqueda = e.target.value;
-                renderizarProductos();
-            }, 250);
-        });
+        document.getElementById('input-buscar').addEventListener('input', function(e) { clearTimeout(timeoutBusqueda); timeoutBusqueda = setTimeout(() => { textoBusqueda = e.target.value; renderizarProductos(); }, 250); });
 
-        async function agregarCarrito(id) {
-            const producto = inventario.find(p => p.id === id);
-            if (producto.existencia <= 0) { mostrarToast('Producto agotado ❌'); return; }
-            const { error } = await supabaseClient.rpc('decrement_stock', { p_id: id, p_qty: 1 });
-            if (error) { mostrarToast('Error al actualizar stock'); return; }
-            producto.existencia -= 1;
-            const existe = carrito.find(item => item.id === id);
-            if (existe) { existe.cantidad += 1; } 
-            else { carrito.push({ id: producto.id, nombre: producto.nombre, venta: producto.venta, cantidad: 1 }); }
-            actualizarUI();
-            renderizarProductos();
-            mostrarToast(`${producto.nombre} agregado!`);
-        }
+        async function agregarCarrito(id) { const p = inventario.find(x => x.id === id); if (p.existencia <= 0) return; const { error } = await supabaseClient.rpc('decrement_stock', { p_id: id, p_qty: 1 }); if (error) return; p.existencia -= 1; const e = carrito.find(i => i.id === id); if (e) e.cantidad += 1; else carrito.push({ id: p.id, nombre: p.nombre, venta: p.venta, cantidad: 1 }); actualizarUI(); renderizarProductos(); mostrarToast(`${p.nombre} agregado!`); }
+        async function vaciarCarrito() { if (carrito.length === 0) return; for (const i of carrito) { await supabaseClient.rpc('increment_stock', { p_id: i.id, p_qty: i.cantidad }); const p = inventario.find(x => x.id === i.id); if (p) p.existencia += i.cantidad; } carrito = []; cuponAplicado = null; descuento = 0; document.getElementById('input-cupon').value = ''; localStorage.removeItem('carritoLaMia'); actualizarUI(); renderizarProductos(); mostrarToast('Carrito vaciado 🗑️'); }
 
-        async function vaciarCarrito() {
-            if (carrito.length === 0) return;
-            for (const item of carrito) {
-                await supabaseClient.rpc('increment_stock', { p_id: item.id, p_qty: item.cantidad });
-                const prod = inventario.find(p => p.id === item.id);
-                if (prod) prod.existencia += item.cantidad;
-            }
-            carrito = [];
-            localStorage.removeItem('carritoLaMia');
-            actualizarUI();
-            renderizarProductos();
-            mostrarToast('Carrito vaciado, stock restaurado 🗑️');
-        }
-
-        async function finalizarPedido(e) {
-            if (e) e.preventDefault();
-            if (carrito.length === 0) { mostrarToast('Tu carrito está vacío'); return false; }
-            const linkWhatsApp = document.getElementById('whatsapp-btn').href;
-            try {
-                const ventasData = carrito.map(item => {
-                    const prod = inventario.find(p => p.id === item.id);
-                    const costoUnitario = prod ? (prod.costo || 0) : 0;
-                    const totalVenta = item.venta * item.cantidad;
-                    const ganancia = totalVenta - (costoUnitario * item.cantidad);
-                    return { producto: item.nombre, cantidad: item.cantidad, precio_venta: item.venta, costo: costoUnitario, total_venta: totalVenta, ganancia: ganancia, moneda: monedaActual };
-                });
-                const { error } = await supabaseClient.from('ventas').insert(ventasData);
-                if (error) { console.error("Error de Supabase:", error); alert("❌ No se pudo guardar la venta. Error: " + error.message); return false; }
-            } catch(err) {
-                console.error("Error en el sistema:", err);
-                alert("❌ Error inesperado al guardar: " + err.message);
-                return false;
-            }
-            carrito = [];
-            localStorage.removeItem('carritoLaMia');
-            actualizarUI();
-            mostrarToast('¡Pedido enviado! Gracias 🎉');
-            window.open(linkWhatsApp, '_blank');
-            return false;
-        }
-
-        let canalPedido = 'whatsapp';
-        let telegramUser = '';
-
-        async function cargarConfigPedido() {
-            const { data } = await supabaseClient.from('ajustes').select('canal_pedido, telegram_user').eq('id', 1).single();
-            if (data) {
-                canalPedido = data.canal_pedido || 'whatsapp';
-                telegramUser = data.telegram_user || '';
-            }
+        // --- CUPONES ---
+        async function aplicarCupon() {
+            const cod = document.getElementById('input-cupon').value.toUpperCase().trim();
+            if (!cod) return;
+            const { data, error } = await supabaseClient.from('cupones').select('*').eq('codigo', cod).eq('activo', true).single();
+            if (error || !data) { mostrarToast('Cupón inválido ❌'); cuponAplicado = null; descuento = 0; actualizarUI(); return; }
+            cuponAplicado = data.codigo; descuento = data.porcentaje;
+            mostrarToast(`Cupón aplicado: -${descuento}% 🎟️`); actualizarUI();
         }
 
         function actualizarUI() {
-            const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
-            document.getElementById('cart-count').innerText = totalItems;
-            localStorage.setItem('carritoLaMia', JSON.stringify(carrito));
-            
-            let btnWhatsApp = document.getElementById('whatsapp-btn');
-            if (carrito.length === 0) { btnWhatsApp.href = "#"; return; }
-
-            let mensaje = "¡Hola! 🛒 Quiero hacer el siguiente pedido en La Mia:%0A%0A";
-            let totalCUP = 0;
-            
-            carrito.forEach((item) => {
-                const subtotalCUP = item.venta * item.cantidad;
-                totalCUP += subtotalCUP;
-                const subtotalTexto = monedaActual === 'USD' ? `$${Math.ceil(subtotalCUP / TASA_USD)} USD` : `${subtotalCUP} CUP`;
-                mensaje += `*${item.cantidad}x* ${item.nombre} - ${subtotalTexto}%0A`;
-            });
-            
-            const totalTexto = monedaActual === 'USD' ? `$${Math.ceil(totalCUP / TASA_USD)} USD` : `${totalCUP} CUP`;
-            mensaje += `%0A*Total a pagar en efectivo:* ${totalTexto}%0A%0A¿Coordinamos la entrega? 🚚`;
-
-            if (canalPedido === 'telegram' && telegramUser) {
-                btnWhatsApp.href = `https://t.me/${telegramUser}?text=${mensaje}`;
-            } else {
-                btnWhatsApp.href = `https://wa.me/5352164100?text=${mensaje}`;
-            }
+            const tI = carrito.reduce((a, i) => a + i.cantidad, 0); document.getElementById('cart-count').innerText = tI; localStorage.setItem('carritoLaMia', JSON.stringify(carrito));
+            const cB = document.getElementById('cupon-bar'); if (carrito.length > 0) cB.classList.remove('hidden'); else cB.classList.add('hidden');
+            let b = document.getElementById('whatsapp-btn'); if (carrito.length === 0) { b.href = "#"; return; }
+            let m = "¡Hola! 🛒 Quiero hacer el siguiente pedido en La Mia:%0A%0A", tC = 0;
+            carrito.forEach(i => { const s = i.venta * i.cantidad; tC += s; m += `*${i.cantidad}x* ${i.nombre} - ${monedaActual === 'USD' ? `$${Math.ceil(s / TASA_USD)} USD` : `${s} CUP`}%0A`; });
+            let tF = tC;
+            if (cuponAplicado && descuento > 0) { let mD = Math.ceil(tC * (descuento / 100)); tF = tC - mD; m += `%0A*Descuento (${descuento}%):* -${monedaActual === 'USD' ? `$${Math.ceil(mD / TASA_USD)} USD` : `${mD} CUP`}%0A`; }
+            m += `%0A*Total a pagar:* ${monedaActual === 'USD' ? `$${Math.ceil(tF / TASA_USD)} USD` : `${tF} CUP`}%0A%0A¿Coordinamos la entrega? 🚚`;
+            b.href = canalPedido === 'telegram' && telegramUser ? `https://t.me/${telegramUser}?text=${m}` : `https://wa.me/5352164100?text=${m}`;
         }
 
-        function mostrarToast(mensaje) {
-            const toast = document.getElementById("toast");
-            toast.innerText = mensaje;
-            toast.className = "show";
-            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        async function finalizarPedido(e) {
+            if (e) e.preventDefault(); if (carrito.length === 0) return false; const lW = document.getElementById('whatsapp-btn').href;
+            try {
+                const vD = carrito.map(i => { const p = inventario.find(x => x.id === i.id); const c = p ? (p.costo || 0) : 0; let tV = i.venta * i.cantidad; if (cuponAplicado && descuento > 0) tV = tV - Math.ceil(tV * (descuento / 100)); return { producto: i.nombre, cantidad: i.cantidad, precio_venta: i.venta, costo: c, total_venta: tV, ganancia: tV - (c * i.cantidad), moneda: monedaActual }; });
+                const { error } = await supabaseClient.from('ventas').insert(vD); if (error) throw error;
+            } catch (e) { alert("Error al guardar venta."); return false; }
+            carrito = []; cuponAplicado = null; descuento = 0; document.getElementById('input-cupon').value = ''; localStorage.removeItem('carritoLaMia'); actualizarUI(); mostrarToast('¡Pedido enviado! 🎉'); window.open(lW, '_blank'); return false;
         }
+
+        function mostrarToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.className = "show"; setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000); }
 
         window.onload = async function() {
-            await obtenerTasaElToque();
-            await cargarConfigPedido(); // CARGAR SI ES WHATSAPP O TELEGRAM
-            try {
-                const { data, error } = await supabaseClient.from('ajustes').select('mantenimiento').eq('id', 1).single();
-                if (data && data.mantenimiento === true) {
-                    document.getElementById('pantalla-mantenimiento').classList.remove('hidden');
-                } else {
-                    cargarInventario();
-                }
-            } catch (error) {
-                cargarInventario();
-            }
+            await obtenerTasaElToque(); await cargarConfigPedido();
+            try { const { data } = await supabaseClient.from('ajustes').select('mantenimiento').eq('id', 1).single(); if (data && data.mantenimiento === true) document.getElementById('pantalla-mantenimiento').classList.remove('hidden'); else cargarInventario(); } catch (e) { cargarInventario(); }
         };
 
-        // --- REGISTRO DEL SERVICE WORKER (PWA) ---
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/LaMia/sw.js')
-                    .then(reg => console.log('Service Worker registrado.', reg.scope))
-                    .catch(err => console.log('Error al registrar SW:', err));
-            });
-        }
+        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/LaMia/sw.js').catch(err => console.log('SW err:', err)); }); }
     </script>
 </body>
 </html>
