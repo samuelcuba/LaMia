@@ -81,8 +81,34 @@
         let categoriaActual = "Todos";
         let monedaActual = "CUP";
         let textoBusqueda = ""; 
-        const TASA_USD = 660; 
+        let TASA_USD = 660; // Tasa de respaldo por si la API falla
         let timeoutBusqueda = null; 
+
+        // --- FUNCIÓN PARA OBENER LA TASA DEL ELTOQUE ---
+        async function obtenerTasaElToque() {
+            try {
+                const response = await fetch('https://api.eltoque.com/v1/tcg/today', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc4MzYyNDEwNCwianRpIjoiYjdiYTcyOTUtNWVhNC00YWMxLTkzNDItOGZlNDdmZGMwMGQyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjZhNGFhNjRlNmNhMjY5OGE5NjRkNTlmZSIsIm5iZiI6MTc4MzYyNDEwNH0.l04tqLs51_0Xjj7mnGFmli1PxcpHOn-Q-qZppmALcV8'
+                    }
+                });
+                
+                if (!response.ok) throw new Error("Error en la respuesta de elToque");
+                
+                const data = await response.json();
+                
+                // La API de elToque devuelve la tasa en data.usd o data.tasa dependiendo de la versión
+                const tasa = data.usd || data.tasa || data.tcg?.usd || data.rate;
+                
+                if (tasa && !isNaN(tasa)) {
+                    TASA_USD = Math.round(tasa); // Redondeamos la tasa a un número entero
+                    console.log("Tasa elToque aplicada:", TASA_USD);
+                }
+            } catch (error) {
+                console.error("No se pudo conectar a elToque. Usando tasa de respaldo (660):", error);
+            }
+        }
 
         function cambiarMoneda(moneda) {
             monedaActual = moneda;
@@ -154,28 +180,22 @@
         function renderizarProductos() {
             const container = document.getElementById('productos-container');
             
-            // 1. Filtrar primero por categoría
             let productosAMostrar = categoriaActual === "Todos" ? inventario : inventario.filter(p => p.categoria === categoriaActual);
-            
-            // 2. Filtrar productos AGOTADOS (Solo mostrar los que tienen existencia > 0)
             productosAMostrar = productosAMostrar.filter(p => p.existencia > 0);
 
-            // 3. Luego filtrar por texto de búsqueda
             if (textoBusqueda.trim() !== "") {
                 productosAMostrar = productosAMostrar.filter(p => p.nombre.toLowerCase().includes(textoBusqueda.toLowerCase()));
             }
 
-            // 4. Si no hay resultados
             if(productosAMostrar.length === 0) {
                 container.innerHTML = "<p class='text-center text-gray-500 col-span-full text-xl font-semibold mt-10'>No se encontraron productos... 🤔</p>";
                 return;
             }
 
-            // 5. Construir todo el HTML en memoria
             let htmlAcumulado = '';
             productosAMostrar.forEach(producto => {
                 const stock = producto.existencia !== undefined ? producto.existencia : 99;
-                const sinStock = stock <= 0; // Esto ya no debería pasar por el filtro de arriba, pero lo dejamos por seguridad
+                const sinStock = stock <= 0; 
 
                 htmlAcumulado += `
                     <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover ${sinStock ? 'opacity-50' : ''}">
@@ -193,7 +213,6 @@
                 `;
             });
 
-            // 6. Inyectar todo el HTML de golpe en el DOM
             container.innerHTML = htmlAcumulado;
         }
 
@@ -332,9 +351,13 @@
             setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
-        // --- INICIALIZACIÓN: REVISAR MANTENIMIENTO ---
+        // --- INICIALIZACIÓN: REVISAR MANTENIMIENTO Y CARGAR TASA ---
         window.onload = async function() {
+            // 1. Obtenemos la tasa del día de elToque antes de cargar la tienda
+            await obtenerTasaElToque();
+
             try {
+                // 2. Revisamos si la tienda está en mantenimiento
                 const { data, error } = await supabaseClient.from('ajustes').select('mantenimiento').eq('id', 1).single();
                 
                 if (data && data.mantenimiento === true) {
