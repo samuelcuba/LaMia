@@ -97,16 +97,15 @@
                 if (!response.ok) throw new Error("Error en la respuesta de elToque");
                 
                 const data = await response.json();
-                
-                // La API de elToque devuelve la tasa en data.usd o data.tasa dependiendo de la versión
-                const tasa = data.usd || data.tasa || data.tcg?.usd || data.rate;
+                const tasa = data.usd || data.USD || data.tasa || data.tcg?.usd || data.rate;
                 
                 if (tasa && !isNaN(tasa)) {
-                    TASA_USD = Math.round(tasa); // Redondeamos la tasa a un número entero
+                    TASA_USD = Math.round(tasa);
                     console.log("Tasa elToque aplicada:", TASA_USD);
                 }
             } catch (error) {
-                console.error("No se pudo conectar a elToque. Usando tasa de respaldo (660):", error);
+                console.log("elToque bloqueó el acceso directo. Usando tasa de respaldo (660).");
+                // Aquí no necesitamos hacer nada, TASA_USD ya es 660 por defecto
             }
         }
 
