@@ -249,24 +249,43 @@
             return false;
         }
 
+        let canalPedido = 'whatsapp';
+        let telegramUser = '';
+
+        async function cargarConfigPedido() {
+            const { data } = await supabaseClient.from('ajustes').select('canal_pedido, telegram_user').eq('id', 1).single();
+            if (data) {
+                canalPedido = data.canal_pedido || 'whatsapp';
+                telegramUser = data.telegram_user || '';
+            }
+        }
+
         function actualizarUI() {
             const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
             document.getElementById('cart-count').innerText = totalItems;
             localStorage.setItem('carritoLaMia', JSON.stringify(carrito));
-            let telefono = "5352164100"; 
+            
             let btnWhatsApp = document.getElementById('whatsapp-btn');
             if (carrito.length === 0) { btnWhatsApp.href = "#"; return; }
+
             let mensaje = "¡Hola! 🛒 Quiero hacer el siguiente pedido en La Mia:%0A%0A";
             let totalCUP = 0;
+            
             carrito.forEach((item) => {
                 const subtotalCUP = item.venta * item.cantidad;
                 totalCUP += subtotalCUP;
                 const subtotalTexto = monedaActual === 'USD' ? `$${Math.ceil(subtotalCUP / TASA_USD)} USD` : `${subtotalCUP} CUP`;
                 mensaje += `*${item.cantidad}x* ${item.nombre} - ${subtotalTexto}%0A`;
             });
+            
             const totalTexto = monedaActual === 'USD' ? `$${Math.ceil(totalCUP / TASA_USD)} USD` : `${totalCUP} CUP`;
             mensaje += `%0A*Total a pagar en efectivo:* ${totalTexto}%0A%0A¿Coordinamos la entrega? 🚚`;
-            btnWhatsApp.href = `https://wa.me/${telefono}?text=${mensaje}`;
+
+            if (canalPedido === 'telegram' && telegramUser) {
+                btnWhatsApp.href = `https://t.me/${telegramUser}?text=${mensaje}`;
+            } else {
+                btnWhatsApp.href = `https://wa.me/5352164100?text=${mensaje}`;
+            }
         }
 
         function mostrarToast(mensaje) {
@@ -276,9 +295,9 @@
             setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
-        // --- INICIALIZACIÓN ---
         window.onload = async function() {
             await obtenerTasaElToque();
+            await cargarConfigPedido(); // CARGAR SI ES WHATSAPP O TELEGRAM
             try {
                 const { data, error } = await supabaseClient.from('ajustes').select('mantenimiento').eq('id', 1).single();
                 if (data && data.mantenimiento === true) {
