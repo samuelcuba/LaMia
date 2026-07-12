@@ -1,38 +1,78 @@
-const CACHE_NAME = 'la-mia-cache-v1';
-const urlsToCache = [
-  '/LaMia/',
-  'https://cdn.tailwindcss.com/',
-  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'
+// ===== LA MIA - SERVICE WORKER v2 =====
+// Estrategias: app shell pre-cacheado, imágenes cache-first,
+// API de Supabase network-first (catálogo offline), resto network-first.
+
+const CACHE_VERSION = 'la-mia-cache-v2';
+
+// App shell: rutas relativas al propio SW (/LaMia/...)
+const PRECACHE_URLS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
+// --- INSTALL: pre-cachear el app shell (tolera fallos individuales) ---
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_VERSION).then(cache =>
+      Promise.allSettled(PRECACHE_URLS.map(url => cache.add(url)))
+    )
   );
   self.skipWaiting();
 });
 
+// --- ACTIVATE: borrar cachés antiguos y tomar el control ---
 self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    caches.keys().then(keys =>
+      Promise.all(keys.map(key => key !== CACHE_VERSION ? caches.delete(key) : null))
+    )
   );
   self.clients.claim();
 });
 
-// Estrategia: Red primero, si no hay red usa el caché (ideal para datos móviles)
+// --- FETCH: estrategia según tipo de recurso ---
 self.addEventListener('fetch', event => {
+  const req = event.request;
+  const url = new URL(req.url);
+
+  // Solo GET; ignorar auth/realtime de Supabase
+  if (req.method !== 'GET') return;
+  if (url.hostname.includes('supabase') && (url.pathname.includes('/auth/') || url.pathname.includes('/realtime'))) return;
+
+  // 1) IMÁGENES (Supabase Storage o cualquier <img>): cache-first con actualización en segundo plano
+  if (req.destination === 'image' || url.hostname.includes('supabase.co') && url.pathname.includes('/storage/')) {
+    event.respondWith(
+      caches.open(CACHE_VERSION).then(cache =>
+        cache.match(req).then(cached => {
+          const network = fetch(req).then(res => {
+            if (res && res.status === 200) cache.put(req, res.clone());
+            return res;
+          }).catch(() => cached);
+          return cached || network; // sirve caché al instante; si no hay, espera red
+        })
+      )
+    );
+    return;
+  }
+
+  // 2) API REST de Supabase (productos, ventas, cupones, ajustes): network-first con respaldo en caché (catálogo offline)
+  if (url.hostname.includes('supabase.co') && url.pathname.includes('/rest/')) {
+    event.respondWith(
+      caches.open(CACHE_VERSION).then(cache =>
+        fetch(req)
+          .then(res => { if (res && res.status === 200) cache.put(req, res.clone()); return res; })
+          .catch(() => cache.match(req))
+      )
+    );
+    return;
+  }
+
+  // 3) DEFAULT (HTML, CDN Tailwind/Supabase JS): network-first, caché y app shell como respaldo
   event.respondWith(
-    fetch(event.request)
-      .catch(() => caches.match(event.request))
+    fetch(req)
+      .catch(() => caches.match(req).then(r => r || caches.match('./index.html')))
   );
 });
