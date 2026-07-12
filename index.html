@@ -18,9 +18,28 @@
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
+        /* ===== SPLASH ANIMADA ===== */
+        #splash-screen { position: fixed; inset: 0; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
+        #splash-screen.oculto { opacity: 0; pointer-events: none; }
+        .splash-logo { font-size: 80px; animation: rebote 1.4s ease-in-out infinite; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.3)); }
+        .splash-nombre { color: #fff; font-size: 32px; font-weight: 800; margin-top: 12px; letter-spacing: 1px; animation: entrada 0.8s ease; }
+        .splash-sub { color: rgba(255,255,255,0.85); font-size: 14px; margin-top: 6px; }
+        .splash-spinner { margin-top: 28px; width: 38px; height: 38px; border: 4px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: girar 0.8s linear infinite; }
+        @keyframes rebote { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-16px) scale(1.05); } }
+        @keyframes girar { to { transform: rotate(360deg); } }
+        @keyframes entrada { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
+
+    <!-- SPLASH ANIMADA -->
+    <div id="splash-screen">
+        <div class="splash-logo">🛒</div>
+        <div class="splash-nombre">🇨🇺 La Mia</div>
+        <div class="splash-sub">Tu Tienda Online</div>
+        <div class="splash-spinner"></div>
+    </div>
 
     <div id="pantalla-mantenimiento" class="hidden fixed inset-0 bg-gray-900 text-white z-[100] flex flex-col items-center justify-center p-6 text-center">
         <div class="text-7xl mb-6 animate-bounce">🛠️</div>
@@ -79,6 +98,13 @@
         let inventario = [], carrito = [], categoriaActual = "Todos", monedaActual = "CUP", textoBusqueda = "", TASA_USD = 660, timeoutBusqueda = null;
         let canalPedido = 'whatsapp', telegramUser = '';
         let cuponAplicado = null, descuento = 0; // NUEVAS VARIABLES PARA CUPONES
+        let splashYaOculto = false;
+
+        function ocultarSplash() {
+            if (splashYaOculto) return; splashYaOculto = true;
+            const s = document.getElementById('splash-screen');
+            if (s) { s.classList.add('oculto'); setTimeout(() => s.remove(), 600); }
+        }
 
         async function obtenerTasaElToque() { try { const { data } = await supabaseClient.from('ajustes').select('tasa_usd').eq('id', 1).single(); if (data && data.tasa_usd) TASA_USD = Math.round(data.tasa_usd); } catch (e) {} }
         async function cargarConfigPedido() { const { data } = await supabaseClient.from('ajustes').select('canal_pedido, telegram_user').eq('id', 1).single(); if (data) { canalPedido = data.canal_pedido || 'whatsapp'; telegramUser = data.telegram_user || ''; } }
@@ -86,7 +112,7 @@
         function cambiarMoneda(m) { monedaActual = m; if(m === 'CUP') { document.getElementById('btn-cup').classList.add('bg-red-600', 'text-white', 'rounded-full'); document.getElementById('btn-cup').classList.remove('text-red-600'); document.getElementById('btn-usd').classList.remove('bg-red-600', 'text-white', 'rounded-full'); document.getElementById('btn-usd').classList.add('text-red-600'); } else { document.getElementById('btn-usd').classList.add('bg-red-600', 'text-white', 'rounded-full'); document.getElementById('btn-usd').classList.remove('text-red-600'); document.getElementById('btn-cup').classList.remove('bg-red-600', 'text-white', 'rounded-full'); document.getElementById('btn-cup').classList.add('text-red-600'); } renderizarProductos(); actualizarUI(); }
         function formatearPrecio(p) { if (monedaActual === 'USD') return `$${Math.ceil(p / TASA_USD)} USD`; return `${p} CUP`; }
 
-        async function cargarInventario() { try { const { data, error } = await supabaseClient.from('productos').select('*'); if (error) throw error; inventario = data; const cG = localStorage.getItem('carritoLaMia'); if (cG) carrito = JSON.parse(cG); renderizarCategorias(); renderizarProductos(); actualizarUI(); } catch (e) { document.getElementById('productos-container').innerHTML = "<p class='text-center text-red-600 col-span-full'>Error.</p>"; } }
+        async function cargarInventario() { try { const { data, error } = await supabaseClient.from('productos').select('*'); if (error) throw error; inventario = data; const cG = localStorage.getItem('carritoLaMia'); if (cG) carrito = JSON.parse(cG); renderizarCategorias(); renderizarProductos(); actualizarUI(); } catch (e) { document.getElementById('productos-container').innerHTML = "<p class='text-center text-red-600 col-span-full'>Error.</p>"; } finally { ocultarSplash(); } }
         function renderizarCategorias() { const c = ["Todos", ...new Set(inventario.map(p => p.categoria))]; const t = document.getElementById('categorias-container'); t.innerHTML = ''; c.forEach(cat => { t.innerHTML += `<button onclick="filtrarCategoria('${cat}')" class="px-4 py-2 rounded-full font-semibold transition ${cat === categoriaActual ? 'bg-red-600 text-white' : 'bg-white text-red-600 border border-red-600 hover:bg-red-100'}">${cat}</button>`; }); }
         function filtrarCategoria(c) { categoriaActual = c; renderizarCategorias(); renderizarProductos(); }
 
@@ -137,8 +163,9 @@
         function mostrarToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.className = "show"; setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000); }
 
         window.onload = async function() {
+            setTimeout(ocultarSplash, 4000); // red de seguridad: nunca más de 4s
             await obtenerTasaElToque(); await cargarConfigPedido();
-            try { const { data } = await supabaseClient.from('ajustes').select('mantenimiento').eq('id', 1).single(); if (data && data.mantenimiento === true) document.getElementById('pantalla-mantenimiento').classList.remove('hidden'); else cargarInventario(); } catch (e) { cargarInventario(); }
+            try { const { data } = await supabaseClient.from('ajustes').select('mantenimiento').eq('id', 1).single(); if (data && data.mantenimiento === true) { document.getElementById('pantalla-mantenimiento').classList.remove('hidden'); ocultarSplash(); } else cargarInventario(); } catch (e) { cargarInventario(); }
         };
 
         if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/LaMia/sw.js').catch(err => console.log('SW err:', err)); }); }
