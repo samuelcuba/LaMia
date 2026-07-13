@@ -53,6 +53,7 @@
             <h1 class="text-2xl font-bold">&#x1F1E8;&#x1F1FA; La Mia</h1>
             <div class="flex items-center gap-3">
                 <button onclick="cambiarIdioma()" id="btn-idioma" class="bg-white text-red-600 font-bold py-1 px-3 rounded-full text-lg" title="Cambiar idioma">🇨🇺</button>
+                <button onclick="activarPush()" id="btn-push" class="bg-white text-red-600 font-bold py-1 px-3 rounded-full text-lg" title="Notificaciones">🔔</button>
                 <div class="bg-white text-red-600 font-bold py-1 px-2 rounded-full text-xs flex">
                     <button onclick="cambiarMoneda('CUP')" id="btn-cup" class="px-3 py-1 bg-red-600 text-white rounded-full">CUP</button>
                     <button onclick="cambiarMoneda('USD')" id="btn-usd" class="px-3 py-1 text-red-600">USD</button>
@@ -67,7 +68,7 @@
 
     <section class="bg-gradient-to-r from-red-500 to-yellow-500 text-white py-12 text-center">
         <h2 class="text-4xl font-extrabold mb-2" data-i18n="hero_titulo">Todo lo que buscas, en un solo lugar</h2>
-        <p class="text-lg" data-i18n-hero-sub>Pagos en efectivo (CUP) &#x1F1E8;&#x1F1FA; y USD | Entrega a domicilio o punto de encuentro</p>
+        <p class="text-lg" data-i18n-hero-sub>Pagos en efectivo (CUP) &#x1F1E8;&#x1F1FA; | Entrega a domicilio o punto de encuentro</p>
     </section>
 
     <div class="container mx-auto px-4 py-6 flex flex-col sm:flex-row gap-4 items-center justify-center">
@@ -95,6 +96,10 @@
         const SUPABASE_URL = 'https://xwaodoprvfzzszohyrlh.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3YW9kb3BydmZ6enN6b2h5cmxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxOTkwMDIsImV4cCI6MjA5ODc3NTAwMn0.2kZkJzLhNh-ANkf4QHFFjMauXONEBZqjOFhSshg_eiA';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // 🔑 Clave pública VAPID (generada con generar-vapid.html y pegada aquí)
+        // Reemplaza este valor con tu clave real tras generarla
+        const VAPID_PUBLIC_KEY = 'PON_AQUI_TU_CLAVE_PUBLICA_VAPID';
 
         let inventario = [], carrito = [], categoriaActual = null, monedaActual = "CUP", textoBusqueda = "", TASA_USD = 660, timeoutBusqueda = null;
         let canalPedido = 'whatsapp', telegramUser = '';
@@ -126,7 +131,12 @@
                 wa_coordinar: "¿Coordinamos la entrega? 🚚",
                 mant_titulo: "Mantenimiento Programado",
                 mant_texto: "Estamos actualizando nuestro inventario para ofrecerte los mejores productos. ¡Volveremos pronto!",
-                btn_idioma_otro: "🇺🇸"
+                btn_idioma_otro: "🇺🇸",
+                push_activar: "Activar notificaciones",
+                push_activado: "Notificaciones activadas ✅",
+                push_denegado: "Permisos denegados. Actívalos en el navegador.",
+                push_no_soportado: "Tu navegador no soporta notificaciones push.",
+                push_error: "Error al activar notificaciones."
             },
             en: {
                 titulo: "La Mia - Your Online Store",
@@ -150,7 +160,12 @@
                 wa_coordinar: "Can we arrange delivery? 🚚",
                 mant_titulo: "Scheduled Maintenance",
                 mant_texto: "We're updating our inventory to offer you the best products. We'll be back soon!",
-                btn_idioma_otro: "🇨🇺"
+                btn_idioma_otro: "🇨🇺",
+                push_activar: "Enable notifications",
+                push_activado: "Notifications enabled ✅",
+                push_denegado: "Permissions denied. Enable them in your browser.",
+                push_no_soportado: "Your browser doesn't support push notifications.",
+                push_error: "Error enabling notifications."
             }
         };
         function t(k) { return (traducciones[idiomaActual] && traducciones[idiomaActual][k]) || k; }
@@ -179,6 +194,47 @@
             if (splashYaOculto) return; splashYaOculto = true;
             const s = document.getElementById('splash-screen');
             if (s) { s.classList.add('oculto'); setTimeout(() => s.remove(), 600); }
+        }
+
+        // ===== NOTIFICACIONES PUSH =====
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+            const rawData = atob(base64);
+            const arr = new Uint8Array(rawData.length);
+            for (let i = 0; i < rawData.length; ++i) arr[i] = rawData.charCodeAt(i);
+            return arr;
+        }
+
+        async function activarPush() {
+            // Si ya está suscrito, no hace nada
+            if (localStorage.getItem('pushLaMia') === '1') { mostrarToast(t('push_activado')); return; }
+            if (!('serviceWorker' in navigator) || !('PushManager' in window)) { mostrarToast(t('push_no_soportado')); return; }
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') { mostrarToast(t('push_denegado')); return; }
+            try {
+                const reg = await navigator.serviceWorker.ready;
+                const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) });
+                const subJson = sub.toJSON();
+                // Guardar en Supabase (tabla suscripciones_push)
+                const { error } = await supabaseClient.from('suscripciones_push').insert([{
+                    endpoint: subJson.endpoint,
+                    p256dh: subJson.keys.p256dh,
+                    auth: subJson.keys.auth
+                }]);
+                if (error) throw error;
+                localStorage.setItem('pushLaMia', '1');
+                document.getElementById('btn-push').classList.add('bg-green-500', 'text-white');
+                document.getElementById('btn-push').classList.remove('bg-white', 'text-red-600');
+                mostrarToast(t('push_activado'));
+            } catch (e) { mostrarToast(t('push_error')); }
+        }
+
+        function marcarPushActivoSiExiste() {
+            if (localStorage.getItem('pushLaMia') === '1') {
+                const b = document.getElementById('btn-push');
+                if (b) { b.classList.add('bg-green-500', 'text-white'); b.classList.remove('bg-white', 'text-red-600'); }
+            }
         }
 
         async function obtenerTasaElToque() { try { const { data } = await supabaseClient.from('ajustes').select('tasa_usd').eq('id', 1).single(); if (data && data.tasa_usd) TASA_USD = Math.round(data.tasa_usd); } catch (e) {} }
@@ -239,6 +295,7 @@
 
         window.onload = async function() {
             aplicarIdioma(); // aplicar idioma guardado antes de cargar
+            marcarPushActivoSiExiste(); // pintar botón 🔔 verde si ya está suscrito
             setTimeout(ocultarSplash, 4000); // red de seguridad: nunca más de 4s
             await obtenerTasaElToque(); await cargarConfigPedido();
             try { const { data } = await supabaseClient.from('ajustes').select('mantenimiento').eq('id', 1).single(); if (data && data.mantenimiento === true) { document.getElementById('pantalla-mantenimiento').classList.remove('hidden'); ocultarSplash(); } else cargarInventario(); } catch (e) { cargarInventario(); }
