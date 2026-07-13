@@ -43,8 +43,8 @@
 
     <div id="pantalla-mantenimiento" class="hidden fixed inset-0 bg-gray-900 text-white z-[100] flex flex-col items-center justify-center p-6 text-center">
         <div class="text-7xl mb-6 animate-bounce">🛠️</div>
-        <h1 class="text-4xl font-extrabold text-yellow-500 mb-4">Mantenimiento Programado</h1>
-        <p class="text-xl text-gray-300 max-w-md mb-6">Estamos actualizando nuestro inventario para ofrecerte los mejores productos. ¡Volveremos pronto!</p>
+        <h1 class="text-4xl font-extrabold text-yellow-500 mb-4" data-i18n="mant_titulo">Mantenimiento Programado</h1>
+        <p class="text-xl text-gray-300 max-w-md mb-6" data-i18n-mant-texto>Estamos actualizando nuestro inventario para ofrecerte los mejores productos. ¡Volveremos pronto!</p>
         <p class="text-gray-500">La Mia &#x1F1E8;&#x1F1FA;</p>
     </div>
 
@@ -52,6 +52,7 @@
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <h1 class="text-2xl font-bold">&#x1F1E8;&#x1F1FA; La Mia</h1>
             <div class="flex items-center gap-3">
+                <button onclick="cambiarIdioma()" id="btn-idioma" class="bg-white text-red-600 font-bold py-1 px-3 rounded-full text-lg" title="Cambiar idioma">🇨🇺</button>
                 <div class="bg-white text-red-600 font-bold py-1 px-2 rounded-full text-xs flex">
                     <button onclick="cambiarMoneda('CUP')" id="btn-cup" class="px-3 py-1 bg-red-600 text-white rounded-full">CUP</button>
                     <button onclick="cambiarMoneda('USD')" id="btn-usd" class="px-3 py-1 text-red-600">USD</button>
@@ -65,12 +66,12 @@
     </header>
 
     <section class="bg-gradient-to-r from-red-500 to-yellow-500 text-white py-12 text-center">
-        <h2 class="text-4xl font-extrabold mb-2">Todo lo que buscas, en un solo lugar</h2>
-        <p class="text-lg">Pagos en efectivo (CUP) &#x1F1E8;&#x1F1FA; y USD | Entrega a domicilio o punto de encuentro</p>
+        <h2 class="text-4xl font-extrabold mb-2" data-i18n="hero_titulo">Todo lo que buscas, en un solo lugar</h2>
+        <p class="text-lg" data-i18n-hero-sub>Pagos en efectivo (CUP) &#x1F1E8;&#x1F1FA; y USD | Entrega a domicilio o punto de encuentro</p>
     </section>
 
     <div class="container mx-auto px-4 py-6 flex flex-col sm:flex-row gap-4 items-center justify-center">
-        <input type="text" id="input-buscar" placeholder="🔎 Buscar producto por nombre..." class="p-3 rounded-full border-2 border-red-200 focus:border-red-500 outline-none w-full sm:w-1/3 text-center text-gray-700 shadow-sm">
+        <input type="text" id="input-buscar" data-i18n-ph="buscar" placeholder="🔎 Buscar producto por nombre..." class="p-3 rounded-full border-2 border-red-200 focus:border-red-500 outline-none w-full sm:w-1/3 text-center text-gray-700 shadow-sm">
         <div class="flex flex-wrap justify-center gap-3" id="categorias-container"></div>
     </div>
 
@@ -78,7 +79,7 @@
 
     <!-- BARRA DE CUPÓN (NUEVA) -->
     <div id="cupon-bar" class="hidden fixed bottom-24 right-6 bg-white p-2 rounded-lg shadow-lg z-50 flex items-center gap-2 border-2 border-purple-500">
-        <input type="text" id="input-cupon" placeholder="Código cupón" class="p-1 text-sm border rounded w-28 focus:outline-none">
+        <input type="text" id="input-cupon" data-i18n-ph="cupon_ph" placeholder="Código cupón" class="p-1 text-sm border rounded w-28 focus:outline-none">
         <button onclick="aplicarCupon()" class="bg-purple-600 text-white px-2 py-1 text-sm rounded font-bold">OK</button>
     </div>
 
@@ -95,10 +96,84 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3YW9kb3BydmZ6enN6b2h5cmxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxOTkwMDIsImV4cCI6MjA5ODc3NTAwMn0.2kZkJzLhNh-ANkf4QHFFjMauXONEBZqjOFhSshg_eiA';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let inventario = [], carrito = [], categoriaActual = "Todos", monedaActual = "CUP", textoBusqueda = "", TASA_USD = 660, timeoutBusqueda = null;
+        let inventario = [], carrito = [], categoriaActual = null, monedaActual = "CUP", textoBusqueda = "", TASA_USD = 660, timeoutBusqueda = null;
         let canalPedido = 'whatsapp', telegramUser = '';
         let cuponAplicado = null, descuento = 0; // NUEVAS VARIABLES PARA CUPONES
         let splashYaOculto = false;
+
+        // ===== MULTI-IDIOMA ES / EN =====
+        let idiomaActual = localStorage.getItem('idiomaLaMia') || 'es';
+        const traducciones = {
+            es: {
+                titulo: "La Mia - Tu Tienda Online",
+                hero_titulo: "Todo lo que buscas, en un solo lugar",
+                hero_sub: "Pagos en efectivo (CUP) 🇨🇺 | Entrega a domicilio o punto de encuentro",
+                buscar: "🔎 Buscar producto por nombre...",
+                cat_todos: "Todos",
+                sin_resultados: "No se encontraron productos... 🤔",
+                disponibles: "Disponibles:",
+                agotado: "Agotado",
+                agregar: "Agregar",
+                cupon_ph: "Código cupón",
+                toast_agregado: "agregado!",
+                toast_carrito_vaciado: "Carrito vaciado 🗑️",
+                toast_cupon_invalido: "Cupón inválido ❌",
+                toast_pedido_enviado: "¡Pedido enviado! 🎉",
+                toast_cupon_aplicado: "Cupón aplicado",
+                wa_saludo: "¡Hola! 🛒 Quiero hacer el siguiente pedido en La Mia:",
+                wa_descuento: "Descuento",
+                wa_total: "Total a pagar",
+                wa_coordinar: "¿Coordinamos la entrega? 🚚",
+                mant_titulo: "Mantenimiento Programado",
+                mant_texto: "Estamos actualizando nuestro inventario para ofrecerte los mejores productos. ¡Volveremos pronto!",
+                btn_idioma_otro: "🇺🇸"
+            },
+            en: {
+                titulo: "La Mia - Your Online Store",
+                hero_titulo: "Everything you need, in one place",
+                hero_sub: "Cash payments (CUP) 🇨🇺 | Home delivery or meeting point",
+                buscar: "🔎 Search product by name...",
+                cat_todos: "All",
+                sin_resultados: "No products found... 🤔",
+                disponibles: "Available:",
+                agotado: "Sold out",
+                agregar: "Add",
+                cupon_ph: "Coupon code",
+                toast_agregado: "added!",
+                toast_carrito_vaciado: "Cart emptied 🗑️",
+                toast_cupon_invalido: "Invalid coupon ❌",
+                toast_pedido_enviado: "Order sent! 🎉",
+                toast_cupon_aplicado: "Coupon applied",
+                wa_saludo: "Hi! 🛒 I'd like to place this order at La Mia:",
+                wa_descuento: "Discount",
+                wa_total: "Total to pay",
+                wa_coordinar: "Can we arrange delivery? 🚚",
+                mant_titulo: "Scheduled Maintenance",
+                mant_texto: "We're updating our inventory to offer you the best products. We'll be back soon!",
+                btn_idioma_otro: "🇨🇺"
+            }
+        };
+        function t(k) { return (traducciones[idiomaActual] && traducciones[idiomaActual][k]) || k; }
+
+        function cambiarIdioma() {
+            idiomaActual = idiomaActual === 'es' ? 'en' : 'es';
+            localStorage.setItem('idiomaLaMia', idiomaActual);
+            aplicarIdioma();
+        }
+
+        function aplicarIdioma() {
+            document.documentElement.lang = idiomaActual;
+            document.getElementById('btn-idioma').innerText = t('btn_idioma_otro');
+            document.title = t('titulo');
+            document.querySelectorAll('[data-i18n]').forEach(el => { el.innerText = t(el.getAttribute('data-i18n')); });
+            document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.getAttribute('data-i18n-ph')); });
+            // Textos especiales con HTML interno
+            const heroSub = document.querySelector('[data-i18n-hero-sub]');
+            if (heroSub) heroSub.innerHTML = t('hero_sub');
+            const mantTexto = document.querySelector('[data-i18n-mant-texto]');
+            if (mantTexto) mantTexto.innerText = t('mant_texto');
+            renderizarCategorias(); renderizarProductos(); actualizarUI();
+        }
 
         function ocultarSplash() {
             if (splashYaOculto) return; splashYaOculto = true;
@@ -113,41 +188,41 @@
         function formatearPrecio(p) { if (monedaActual === 'USD') return `$${Math.ceil(p / TASA_USD)} USD`; return `${p} CUP`; }
 
         async function cargarInventario() { try { const { data, error } = await supabaseClient.from('productos').select('*'); if (error) throw error; inventario = data; const cG = localStorage.getItem('carritoLaMia'); if (cG) carrito = JSON.parse(cG); renderizarCategorias(); renderizarProductos(); actualizarUI(); } catch (e) { document.getElementById('productos-container').innerHTML = "<p class='text-center text-red-600 col-span-full'>Error.</p>"; } finally { ocultarSplash(); } }
-        function renderizarCategorias() { const c = ["Todos", ...new Set(inventario.map(p => p.categoria))]; const t = document.getElementById('categorias-container'); t.innerHTML = ''; c.forEach(cat => { t.innerHTML += `<button onclick="filtrarCategoria('${cat}')" class="px-4 py-2 rounded-full font-semibold transition ${cat === categoriaActual ? 'bg-red-600 text-white' : 'bg-white text-red-600 border border-red-600 hover:bg-red-100'}">${cat}</button>`; }); }
+        function renderizarCategorias() { const c = [t('cat_todos'), ...new Set(inventario.map(p => p.categoria))]; const ct = document.getElementById('categorias-container'); ct.innerHTML = ''; c.forEach((cat, idx) => { const activa = (idx === 0 && categoriaActual === null) || cat === categoriaActual; ct.innerHTML += `<button onclick="filtrarCategoria(${idx === 0 ? 'null' : `'${cat.replace(/'/g, "\\'")}'`})" class="px-4 py-2 rounded-full font-semibold transition ${activa ? 'bg-red-600 text-white' : 'bg-white text-red-600 border border-red-600 hover:bg-red-100'}">${cat}</button>`; }); }
         function filtrarCategoria(c) { categoriaActual = c; renderizarCategorias(); renderizarProductos(); }
 
         function renderizarProductos() {
-            const c = document.getElementById('productos-container'); let pM = categoriaActual === "Todos" ? inventario : inventario.filter(p => p.categoria === categoriaActual); pM = pM.filter(p => p.existencia > 0);
+            const c = document.getElementById('productos-container'); let pM = categoriaActual === null ? inventario : inventario.filter(p => p.categoria === categoriaActual); pM = pM.filter(p => p.existencia > 0);
             if (textoBusqueda.trim() !== "") pM = pM.filter(p => p.nombre.toLowerCase().includes(textoBusqueda.toLowerCase()));
-            if(pM.length === 0) return c.innerHTML = "<p class='text-center text-gray-500 col-span-full text-xl font-semibold mt-10'>No se encontraron productos... 🤔</p>";
-            let h = ''; pM.forEach(p => { const s = p.existencia !== undefined ? p.existencia : 99, sS = s <= 0; h += `<div class="bg-white rounded-xl shadow-md overflow-hidden card-hover ${sS ? 'opacity-50' : ''}"><img src="${p.img}" alt="${p.nombre}" loading="lazy" class="w-full h-40 object-cover"><div class="p-4"><span class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full">${p.categoria}</span><h3 class="font-bold text-lg mt-2">${p.nombre}</h3><p class="text-sm text-gray-500 mb-1">Disponibles: ${sS ? '0' : s}</p><p class="text-2xl font-extrabold text-red-600 my-2">${formatearPrecio(p.venta)}</p><button onclick="agregarCarrito(${p.id})" ${sS ? 'disabled' : ''} class="w-full font-bold py-2 rounded-lg transition ${sS ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700'}">${sS ? 'Agotado' : 'Agregar'}</button></div></div>`; });
+            if(pM.length === 0) return c.innerHTML = `<p class='text-center text-gray-500 col-span-full text-xl font-semibold mt-10'>${t('sin_resultados')}</p>`;
+            let h = ''; pM.forEach(p => { const s = p.existencia !== undefined ? p.existencia : 99, sS = s <= 0; h += `<div class="bg-white rounded-xl shadow-md overflow-hidden card-hover ${sS ? 'opacity-50' : ''}"><img src="${p.img}" alt="${p.nombre}" loading="lazy" class="w-full h-40 object-cover"><div class="p-4"><span class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full">${p.categoria}</span><h3 class="font-bold text-lg mt-2">${p.nombre}</h3><p class="text-sm text-gray-500 mb-1">${t('disponibles')} ${sS ? '0' : s}</p><p class="text-2xl font-extrabold text-red-600 my-2">${formatearPrecio(p.venta)}</p><button onclick="agregarCarrito(${p.id})" ${sS ? 'disabled' : ''} class="w-full font-bold py-2 rounded-lg transition ${sS ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700'}">${sS ? t('agotado') : t('agregar')}</button></div></div>`; });
             c.innerHTML = h;
         }
 
         document.getElementById('input-buscar').addEventListener('input', function(e) { clearTimeout(timeoutBusqueda); timeoutBusqueda = setTimeout(() => { textoBusqueda = e.target.value; renderizarProductos(); }, 250); });
 
-        async function agregarCarrito(id) { const p = inventario.find(x => x.id === id); if (p.existencia <= 0) return; const { error } = await supabaseClient.rpc('decrement_stock', { p_id: id, p_qty: 1 }); if (error) return; p.existencia -= 1; const e = carrito.find(i => i.id === id); if (e) e.cantidad += 1; else carrito.push({ id: p.id, nombre: p.nombre, venta: p.venta, cantidad: 1 }); actualizarUI(); renderizarProductos(); mostrarToast(`${p.nombre} agregado!`); }
-        async function vaciarCarrito() { if (carrito.length === 0) return; for (const i of carrito) { await supabaseClient.rpc('increment_stock', { p_id: i.id, p_qty: i.cantidad }); const p = inventario.find(x => x.id === i.id); if (p) p.existencia += i.cantidad; } carrito = []; cuponAplicado = null; descuento = 0; document.getElementById('input-cupon').value = ''; localStorage.removeItem('carritoLaMia'); actualizarUI(); renderizarProductos(); mostrarToast('Carrito vaciado 🗑️'); }
+        async function agregarCarrito(id) { const p = inventario.find(x => x.id === id); if (p.existencia <= 0) return; const { error } = await supabaseClient.rpc('decrement_stock', { p_id: id, p_qty: 1 }); if (error) return; p.existencia -= 1; const e = carrito.find(i => i.id === id); if (e) e.cantidad += 1; else carrito.push({ id: p.id, nombre: p.nombre, venta: p.venta, cantidad: 1 }); actualizarUI(); renderizarProductos(); mostrarToast(`${p.nombre} ${t('toast_agregado')}`); }
+        async function vaciarCarrito() { if (carrito.length === 0) return; for (const i of carrito) { await supabaseClient.rpc('increment_stock', { p_id: i.id, p_qty: i.cantidad }); const p = inventario.find(x => x.id === i.id); if (p) p.existencia += i.cantidad; } carrito = []; cuponAplicado = null; descuento = 0; document.getElementById('input-cupon').value = ''; localStorage.removeItem('carritoLaMia'); actualizarUI(); renderizarProductos(); mostrarToast(t('toast_carrito_vaciado')); }
 
         // --- CUPONES ---
         async function aplicarCupon() {
             const cod = document.getElementById('input-cupon').value.toUpperCase().trim();
             if (!cod) return;
             const { data, error } = await supabaseClient.from('cupones').select('*').eq('codigo', cod).eq('activo', true).single();
-            if (error || !data) { mostrarToast('Cupón inválido ❌'); cuponAplicado = null; descuento = 0; actualizarUI(); return; }
+            if (error || !data) { mostrarToast(t('toast_cupon_invalido')); cuponAplicado = null; descuento = 0; actualizarUI(); return; }
             cuponAplicado = data.codigo; descuento = data.porcentaje;
-            mostrarToast(`Cupón aplicado: -${descuento}% 🎟️`); actualizarUI();
+            mostrarToast(`${t('toast_cupon_aplicado')}: -${descuento}% 🎟️`); actualizarUI();
         }
 
         function actualizarUI() {
             const tI = carrito.reduce((a, i) => a + i.cantidad, 0); document.getElementById('cart-count').innerText = tI; localStorage.setItem('carritoLaMia', JSON.stringify(carrito));
             const cB = document.getElementById('cupon-bar'); if (carrito.length > 0) cB.classList.remove('hidden'); else cB.classList.add('hidden');
             let b = document.getElementById('whatsapp-btn'); if (carrito.length === 0) { b.href = "#"; return; }
-            let m = "¡Hola! 🛒 Quiero hacer el siguiente pedido en La Mia:%0A%0A", tC = 0;
+            let m = t('wa_saludo') + "%0A%0A", tC = 0;
             carrito.forEach(i => { const s = i.venta * i.cantidad; tC += s; m += `*${i.cantidad}x* ${i.nombre} - ${monedaActual === 'USD' ? `$${Math.ceil(s / TASA_USD)} USD` : `${s} CUP`}%0A`; });
             let tF = tC;
-            if (cuponAplicado && descuento > 0) { let mD = Math.ceil(tC * (descuento / 100)); tF = tC - mD; m += `%0A*Descuento (${descuento}%):* -${monedaActual === 'USD' ? `$${Math.ceil(mD / TASA_USD)} USD` : `${mD} CUP`}%0A`; }
-            m += `%0A*Total a pagar:* ${monedaActual === 'USD' ? `$${Math.ceil(tF / TASA_USD)} USD` : `${tF} CUP`}%0A%0A¿Coordinamos la entrega? 🚚`;
+            if (cuponAplicado && descuento > 0) { let mD = Math.ceil(tC * (descuento / 100)); tF = tC - mD; m += `%0A*${t('wa_descuento')} (${descuento}%):* -${monedaActual === 'USD' ? `$${Math.ceil(mD / TASA_USD)} USD` : `${mD} CUP`}%0A`; }
+            m += `%0A*${t('wa_total')}:* ${monedaActual === 'USD' ? `$${Math.ceil(tF / TASA_USD)} USD` : `${tF} CUP`}%0A%0A${t('wa_coordinar')}`;
             b.href = canalPedido === 'telegram' && telegramUser ? `https://t.me/${telegramUser}?text=${m}` : `https://wa.me/5352164100?text=${m}`;
         }
 
@@ -157,12 +232,13 @@
                 const vD = carrito.map(i => { const p = inventario.find(x => x.id === i.id); const c = p ? (p.costo || 0) : 0; let tV = i.venta * i.cantidad; if (cuponAplicado && descuento > 0) tV = tV - Math.ceil(tV * (descuento / 100)); return { producto: i.nombre, cantidad: i.cantidad, precio_venta: i.venta, costo: c, total_venta: tV, ganancia: tV - (c * i.cantidad), moneda: monedaActual }; });
                 const { error } = await supabaseClient.from('ventas').insert(vD); if (error) throw error;
             } catch (e) { alert("Error al guardar venta."); return false; }
-            carrito = []; cuponAplicado = null; descuento = 0; document.getElementById('input-cupon').value = ''; localStorage.removeItem('carritoLaMia'); actualizarUI(); mostrarToast('¡Pedido enviado! 🎉'); window.open(lW, '_blank'); return false;
+            carrito = []; cuponAplicado = null; descuento = 0; document.getElementById('input-cupon').value = ''; localStorage.removeItem('carritoLaMia'); actualizarUI(); mostrarToast(t('toast_pedido_enviado')); window.open(lW, '_blank'); return false;
         }
 
         function mostrarToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.className = "show"; setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000); }
 
         window.onload = async function() {
+            aplicarIdioma(); // aplicar idioma guardado antes de cargar
             setTimeout(ocultarSplash, 4000); // red de seguridad: nunca más de 4s
             await obtenerTasaElToque(); await cargarConfigPedido();
             try { const { data } = await supabaseClient.from('ajustes').select('mantenimiento').eq('id', 1).single(); if (data && data.mantenimiento === true) { document.getElementById('pantalla-mantenimiento').classList.remove('hidden'); ocultarSplash(); } else cargarInventario(); } catch (e) { cargarInventario(); }
