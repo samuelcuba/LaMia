@@ -1,10 +1,5 @@
 // ===== LA MIA - SERVICE WORKER v2 =====
-// Estrategias: app shell pre-cacheado, imágenes cache-first,
-// API de Supabase network-first (catálogo offline), resto network-first.
-
 const CACHE_VERSION = 'la-mia-cache-v2';
-
-// App shell: rutas relativas al propio SW (/LaMia/...)
 const PRECACHE_URLS = [
   './',
   './index.html',
@@ -13,7 +8,7 @@ const PRECACHE_URLS = [
   './icon-512.png'
 ];
 
-// --- INSTALL: pre-cachear el app shell (tolera fallos individuales) ---
+// --- INSTALL ---
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_VERSION).then(cache =>
@@ -23,7 +18,7 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// --- ACTIVATE: borrar cachés antiguos y tomar el control ---
+// --- ACTIVATE ---
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -33,17 +28,16 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// --- FETCH: estrategia según tipo de recurso ---
+// --- FETCH ---
 self.addEventListener('fetch', event => {
   const req = event.request;
   const url = new URL(req.url);
 
-  // Solo GET; ignorar auth/realtime de Supabase
   if (req.method !== 'GET') return;
   if (url.hostname.includes('supabase') && (url.pathname.includes('/auth/') || url.pathname.includes('/realtime'))) return;
 
-  // 1) IMÁGENES (Supabase Storage o cualquier <img>): cache-first con actualización en segundo plano
-  if (req.destination === 'image' || url.hostname.includes('supabase.co') && url.pathname.includes('/storage/')) {
+  // Imágenes: cache-first
+  if (req.destination === 'image' || (url.hostname.includes('supabase.co') && url.pathname.includes('/storage/'))) {
     event.respondWith(
       caches.open(CACHE_VERSION).then(cache =>
         cache.match(req).then(cached => {
@@ -51,14 +45,14 @@ self.addEventListener('fetch', event => {
             if (res && res.status === 200) cache.put(req, res.clone());
             return res;
           }).catch(() => cached);
-          return cached || network; // sirve caché al instante; si no hay, espera red
+          return cached || network;
         })
       )
     );
     return;
   }
 
-  // 2) API REST de Supabase (productos, ventas, cupones, ajustes): network-first con respaldo en caché (catálogo offline)
+  // API Supabase: network-first
   if (url.hostname.includes('supabase.co') && url.pathname.includes('/rest/')) {
     event.respondWith(
       caches.open(CACHE_VERSION).then(cache =>
@@ -70,7 +64,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // 3) DEFAULT (HTML, CDN Tailwind/Supabase JS): network-first, caché y app shell como respaldo
+  // Default: network-first, fallback a caché o index.html
   event.respondWith(
     fetch(req)
       .catch(() => caches.match(req).then(r => r || caches.match('./index.html')))
@@ -79,6 +73,7 @@ self.addEventListener('fetch', event => {
 
 // ===== NOTIFICACIONES PUSH =====
 self.addEventListener('push', event => {
+  console.log('[SW] Push recibido en:', new Date().toISOString()); // 👈 Log para depurar
   let payload = { title: 'La Mia 🛒', body: 'Tienes una nueva notificación' };
   try { if (event.data) payload = event.data.json(); } catch (e) { if (event.data) payload.body = event.data.text(); }
   event.waitUntil(
@@ -88,12 +83,13 @@ self.addEventListener('push', event => {
       badge: 'icon-192.png',
       data: { url: payload.url || '/LaMia/' },
       vibrate: [200, 100, 200],
-      tag: 'la-mia-push'
+      tag: 'la-mia-push',
+      // requireInteraction: true // Descomenta si quieres que la notificación permanezca
     })
   );
 });
 
-// Al hacer clic en la notificación: abrir/enfocar la app
+// ===== CLIC EN NOTIFICACIÓN =====
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   const targetUrl = (event.notification.data && event.notification.data.url) || '/LaMia/';
@@ -105,4 +101,13 @@ self.addEventListener('notificationclick', event => {
       if (clients.openWindow) return clients.openWindow(targetUrl);
     })
   );
+});
+
+// ===== MANTENER SW ACTIVO (HEARTBEAT) =====
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'PING') {
+    if (event.ports && event.ports[0]) {
+      event.ports[0].postMessage('PONG');
+    }
+  }
 });
