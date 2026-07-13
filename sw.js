@@ -76,3 +76,33 @@ self.addEventListener('fetch', event => {
       .catch(() => caches.match(req).then(r => r || caches.match('./index.html')))
   );
 });
+
+// ===== NOTIFICACIONES PUSH =====
+self.addEventListener('push', event => {
+  let payload = { title: 'La Mia 🛒', body: 'Tienes una nueva notificación' };
+  try { if (event.data) payload = event.data.json(); } catch (e) { if (event.data) payload.body = event.data.text(); }
+  event.waitUntil(
+    self.registration.showNotification(payload.title || 'La Mia 🛒', {
+      body: payload.body || '',
+      icon: 'icon-192.png',
+      badge: 'icon-192.png',
+      data: { url: payload.url || '/LaMia/' },
+      vibrate: [200, 100, 200],
+      tag: 'la-mia-push'
+    })
+  );
+});
+
+// Al hacer clic en la notificación: abrir/enfocar la app
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const targetUrl = (event.notification.data && event.notification.data.url) || '/LaMia/';
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+      for (const client of clientList) {
+        if ('focus' in client) return client.focus();
+      }
+      if (clients.openWindow) return clients.openWindow(targetUrl);
+    })
+  );
+});
