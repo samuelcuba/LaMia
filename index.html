@@ -6,21 +6,37 @@
     <title>La Mia - Tu Tienda Online</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Tipografía Moderna -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PWA Config -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#dc2626">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .card-hover:hover { transform: translateY(-5px); transition: 0.3s; }
-        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 100; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        body { font-family: 'Poppins', sans-serif; background-color: #f3f4f6; }
+        
+        /* Animaciones de Tarjetas y Hover */
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); 
+        }
+        
+        /* Notificaciones Toast */
+        #toast { visibility: hidden; min-width: 250px; background-color: #1f2937; color: #fff; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 100; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 16px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); font-weight: 500; }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
         /* ===== SPLASH ANIMADA ===== */
-        #splash-screen { position: fixed; inset: 0; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
+        #splash-screen { position: fixed; inset: 0; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
         #splash-screen.oculto { opacity: 0; pointer-events: none; }
         .splash-logo { font-size: 80px; animation: rebote 1.4s ease-in-out infinite; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.3)); }
         .splash-nombre { color: #fff; font-size: 32px; font-weight: 800; margin-top: 12px; letter-spacing: 1px; animation: entrada 0.8s ease; }
@@ -41,6 +57,7 @@
         <div class="splash-spinner"></div>
     </div>
 
+    <!-- PANTALLA DE MANTENIMIENTO -->
     <div id="pantalla-mantenimiento" class="hidden fixed inset-0 bg-gray-900 text-white z-[100] flex flex-col items-center justify-center p-6 text-center">
         <div class="text-7xl mb-6 animate-bounce">🛠️</div>
         <h1 class="text-4xl font-extrabold text-yellow-500 mb-4" data-i18n="mant_titulo">Mantenimiento Programado</h1>
@@ -48,17 +65,20 @@
         <p class="text-gray-500">La Mia &#x1F1E8;&#x1F1FA;</p>
     </div>
 
-    <header class="bg-red-600 text-white shadow-md sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold">&#x1F1E8;&#x1F1FA; La Mia</h1>
-            <div class="flex items-center gap-3">
-                <button onclick="cambiarIdioma()" id="btn-idioma" class="bg-white text-red-600 font-bold py-1 px-3 rounded-full text-lg" title="Cambiar idioma">🇨🇺</button>
-                <button onclick="activarPush()" id="btn-push" class="bg-white text-red-600 font-bold py-1 px-3 rounded-full text-lg" title="Notificaciones">🔔</button>
-                <div class="bg-white text-red-600 font-bold py-1 px-2 rounded-full text-xs flex">
-                    <button onclick="cambiarMoneda('CUP')" id="btn-cup" class="px-3 py-1 bg-red-600 text-white rounded-full">CUP</button>
-                    <button onclick="cambiarMoneda('USD')" id="btn-usd" class="px-3 py-1 text-red-600">USD</button>
+    <!-- HEADER MEJORADO (Glassmorphism) -->
+    <header class="bg-red-600/95 backdrop-blur-md text-white shadow-lg sticky top-0 z-50 border-b border-red-700/50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-2xl font-extrabold tracking-tight flex items-center gap-1">
+                🛒 <span class="hidden sm:inline">La Mia</span>
+            </h1>
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button onclick="cambiarIdioma()" id="btn-idioma" class="bg-white/20 hover:bg-white/40 text-white font-bold p-2 rounded-full text-lg transition" title="Cambiar idioma">🇨🇺</button>
+                <button onclick="activarPush()" id="btn-push" class="bg-white/20 hover:bg-white/40 text-white font-bold p-2 rounded-full text-lg transition" title="Notificaciones">🔔</button>
+                <div class="bg-white/20 p-1 rounded-full text-xs flex">
+                    <button onclick="cambiarMoneda('CUP')" id="btn-cup" class="px-3 py-1 bg-white text-red-600 rounded-full font-bold transition">CUP</button>
+                    <button onclick="cambiarMoneda('USD')" id="btn-usd" class="px-3 py-1 text-white font-bold transition">USD</button>
                 </div>
-                <div class="bg-white text-red-600 font-bold py-2 px-4 rounded-full text-sm flex items-center gap-2">
+                <div class="bg-white text-red-600 font-bold py-2 px-4 rounded-full text-sm flex items-center gap-2 shadow-md">
                     <span>🛒 <span id="cart-count">0</span></span>
                     <button onclick="vaciarCarrito()" class="text-red-400 hover:text-red-700 font-bold text-lg leading-none ml-1" title="Vaciar carrito">&times;</button>
                 </div>
@@ -66,25 +86,35 @@
         </div>
     </header>
 
-    <section class="bg-gradient-to-r from-red-500 to-yellow-500 text-white py-12 text-center">
-        <h2 class="text-4xl font-extrabold mb-2" data-i18n="hero_titulo">Todo lo que buscas, en un solo lugar</h2>
-        <p class="text-lg" data-i18n-hero-sub>Pagos en efectivo (CUP) &#x1F1E8;&#x1F1FA; | Entrega a domicilio o punto de encuentro</p>
+    <!-- HERO BANNER MEJORADO -->
+    <section class="relative bg-gradient-to-br from-red-600 via-red-500 to-red-700 text-white py-16 text-center overflow-hidden shadow-inner">
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
+        <div class="container mx-auto px-4 relative z-10">
+            <h2 class="text-3xl md:text-5xl font-extrabold mb-3 drop-shadow-md" data-i18n="hero_titulo">Todo lo que buscas, en un solo lugar</h2>
+            <p class="text-base md:text-lg font-medium max-w-2xl mx-auto bg-black/20 inline-block px-4 py-2 rounded-full" data-i18n-hero-sub>Pagos en efectivo (CUP) 🇨🇺 | Entrega a domicilio o punto de encuentro</p>
+        </div>
     </section>
 
-    <div class="container mx-auto px-4 py-6 flex flex-col sm:flex-row gap-4 items-center justify-center">
-        <input type="text" id="input-buscar" data-i18n-ph="buscar" placeholder="🔎 Buscar producto por nombre..." class="p-3 rounded-full border-2 border-red-200 focus:border-red-500 outline-none w-full sm:w-1/3 text-center text-gray-700 shadow-sm">
-        <div class="flex flex-wrap justify-center gap-3" id="categorias-container"></div>
+    <!-- BUSCADOR Y CATEGORÍAS -->
+    <div class="container mx-auto px-4 py-8 flex flex-col gap-4">
+        <div class="relative w-full sm:max-w-md mx-auto">
+            <input type="text" id="input-buscar" data-i18n-ph="buscar" placeholder="Buscar producto por nombre..." class="w-full p-4 pl-12 rounded-2xl border-2 border-gray-200 focus:border-red-500 focus:ring-4 focus:ring-red-100 outline-none text-gray-700 shadow-sm transition font-medium">
+            <svg class="absolute left-4 top-4 w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </div>
+        <div class="flex flex-wrap justify-center gap-2 sm:gap-3" id="categorias-container"></div>
     </div>
 
-    <main class="container mx-auto px-4 py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="productos-container"></main>
+    <!-- CONTENEDOR DE PRODUCTOS -->
+    <main class="container mx-auto px-4 pb-24 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="productos-container"></main>
 
-    <!-- BARRA DE CUPÓN (NUEVA) -->
+    <!-- BARRA DE CUPÓN -->
     <div id="cupon-bar" class="hidden fixed bottom-24 right-6 bg-white p-2 rounded-lg shadow-lg z-50 flex items-center gap-2 border-2 border-purple-500">
         <input type="text" id="input-cupon" data-i18n-ph="cupon_ph" placeholder="Código cupón" class="p-1 text-sm border rounded w-28 focus:outline-none">
         <button onclick="aplicarCupon()" class="bg-purple-600 text-white px-2 py-1 text-sm rounded font-bold">OK</button>
     </div>
 
-    <a href="#" id="whatsapp-btn" onclick="return finalizarPedido(event)" class="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 z-50 flex items-center">
+    <!-- BOTÓN FLOTANTE WHATSAPP -->
+    <a href="#" id="whatsapp-btn" onclick="return finalizarPedido(event)" class="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 z-50 flex items-center transition transform hover:scale-110">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
             <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.493.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.929 4.664c-.004 3.626-2.962 6.584-6.59 6.584zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.629.775-.114.133-.232.148-.43.05-.197-.099-.836-.308-1.592-.985-.59-.523-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.132.065-.246.033-.346-.033-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.837.328 1.122.421.473.151.904.129 1.246.08.38-.058 1.171-.479 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
         </svg>
@@ -97,13 +127,11 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3YW9kb3BydmZ6enN6b2h5cmxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxOTkwMDIsImV4cCI6MjA5ODc3NTAwMn0.2kZkJzLhNh-ANkf4QHFFjMauXONEBZqjOFhSshg_eiA';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // 🔑 Clave pública VAPID (generada con generar-vapid.html y pegada aquí)
-        // Reemplaza este valor con tu clave real tras generarla
         const VAPID_PUBLIC_KEY = 'BB3So7Bz4lW7xnUVshfZ3A1lu2-OjqApbPfgUuVDMu-mEiWhaGvEIlDSz77BBZYERuv8OBDZdNCvGsD7-ogp3l0';
 
         let inventario = [], carrito = [], categoriaActual = null, monedaActual = "CUP", textoBusqueda = "", TASA_USD = 660, timeoutBusqueda = null;
         let canalPedido = 'whatsapp', telegramUser = '';
-        let cuponAplicado = null, descuento = 0; // NUEVAS VARIABLES PARA CUPONES
+        let cuponAplicado = null, descuento = 0; 
         let splashYaOculto = false;
 
         // ===== MULTI-IDIOMA ES / EN =====
@@ -182,7 +210,6 @@
             document.title = t('titulo');
             document.querySelectorAll('[data-i18n]').forEach(el => { el.innerText = t(el.getAttribute('data-i18n')); });
             document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.getAttribute('data-i18n-ph')); });
-            // Textos especiales con HTML interno
             const heroSub = document.querySelector('[data-i18n-hero-sub]');
             if (heroSub) heroSub.innerHTML = t('hero_sub');
             const mantTexto = document.querySelector('[data-i18n-mant-texto]');
@@ -207,7 +234,6 @@
         }
 
         async function activarPush() {
-            // Si ya está suscrito, no hace nada
             if (localStorage.getItem('pushLaMia') === '1') { mostrarToast(t('push_activado')); return; }
             if (!('serviceWorker' in navigator) || !('PushManager' in window)) { mostrarToast(t('push_no_soportado')); return; }
             const permission = await Notification.requestPermission();
@@ -216,7 +242,6 @@
                 const reg = await navigator.serviceWorker.ready;
                 const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) });
                 const subJson = sub.toJSON();
-                // Guardar en Supabase (tabla suscripciones_push)
                 const { error } = await supabaseClient.from('suscripciones_push').insert([{
                     endpoint: subJson.endpoint,
                     p256dh: subJson.keys.p256dh,
@@ -225,7 +250,7 @@
                 if (error) throw error;
                 localStorage.setItem('pushLaMia', '1');
                 document.getElementById('btn-push').classList.add('bg-green-500', 'text-white');
-                document.getElementById('btn-push').classList.remove('bg-white', 'text-red-600');
+                document.getElementById('btn-push').classList.remove('bg-white/20', 'hover:bg-white/40');
                 mostrarToast(t('push_activado'));
             } catch (e) { mostrarToast(t('push_error')); }
         }
@@ -233,32 +258,114 @@
         function marcarPushActivoSiExiste() {
             if (localStorage.getItem('pushLaMia') === '1') {
                 const b = document.getElementById('btn-push');
-                if (b) { b.classList.add('bg-green-500', 'text-white'); b.classList.remove('bg-white', 'text-red-600'); }
+                if (b) { b.classList.add('bg-green-500', 'text-white'); b.classList.remove('bg-white/20', 'hover:bg-white/40'); }
             }
         }
 
         async function obtenerTasaElToque() { try { const { data } = await supabaseClient.from('ajustes').select('tasa_usd').eq('id', 1).single(); if (data && data.tasa_usd) TASA_USD = Math.round(data.tasa_usd); } catch (e) {} }
         async function cargarConfigPedido() { const { data } = await supabaseClient.from('ajustes').select('canal_pedido, telegram_user').eq('id', 1).single(); if (data) { canalPedido = data.canal_pedido || 'whatsapp'; telegramUser = data.telegram_user || ''; } }
 
-        function cambiarMoneda(m) { monedaActual = m; if(m === 'CUP') { document.getElementById('btn-cup').classList.add('bg-red-600', 'text-white', 'rounded-full'); document.getElementById('btn-cup').classList.remove('text-red-600'); document.getElementById('btn-usd').classList.remove('bg-red-600', 'text-white', 'rounded-full'); document.getElementById('btn-usd').classList.add('text-red-600'); } else { document.getElementById('btn-usd').classList.add('bg-red-600', 'text-white', 'rounded-full'); document.getElementById('btn-usd').classList.remove('text-red-600'); document.getElementById('btn-cup').classList.remove('bg-red-600', 'text-white', 'rounded-full'); document.getElementById('btn-cup').classList.add('text-red-600'); } renderizarProductos(); actualizarUI(); }
+        function cambiarMoneda(m) { 
+            monedaActual = m; 
+            if(m === 'CUP') { 
+                document.getElementById('btn-cup').classList.add('bg-white', 'text-red-600'); 
+                document.getElementById('btn-cup').classList.remove('text-white'); 
+                document.getElementById('btn-usd').classList.remove('bg-white', 'text-red-600'); 
+                document.getElementById('btn-usd').classList.add('text-white'); 
+            } else { 
+                document.getElementById('btn-usd').classList.add('bg-white', 'text-red-600'); 
+                document.getElementById('btn-usd').classList.remove('text-white'); 
+                document.getElementById('btn-cup').classList.remove('bg-white', 'text-red-600'); 
+                document.getElementById('btn-cup').classList.add('text-white'); 
+            } 
+            renderizarProductos(); actualizarUI(); 
+        }
+        
         function formatearPrecio(p) { if (monedaActual === 'USD') return `$${Math.ceil(p / TASA_USD)} USD`; return `${p} CUP`; }
 
-        async function cargarInventario() { try { const { data, error } = await supabaseClient.from('productos').select('*'); if (error) throw error; inventario = data; const cG = localStorage.getItem('carritoLaMia'); if (cG) carrito = JSON.parse(cG); renderizarCategorias(); renderizarProductos(); actualizarUI(); } catch (e) { document.getElementById('productos-container').innerHTML = "<p class='text-center text-red-600 col-span-full'>Error.</p>"; } finally { ocultarSplash(); } }
-        function renderizarCategorias() { const c = [t('cat_todos'), ...new Set(inventario.map(p => p.categoria))]; const ct = document.getElementById('categorias-container'); ct.innerHTML = ''; c.forEach((cat, idx) => { const activa = (idx === 0 && categoriaActual === null) || cat === categoriaActual; ct.innerHTML += `<button onclick="filtrarCategoria(${idx === 0 ? 'null' : `'${cat.replace(/'/g, "\\'")}'`})" class="px-4 py-2 rounded-full font-semibold transition ${activa ? 'bg-red-600 text-white' : 'bg-white text-red-600 border border-red-600 hover:bg-red-100'}">${cat}</button>`; }); }
+        async function cargarInventario() { 
+            try { 
+                const { data, error } = await supabaseClient.from('productos').select('*'); 
+                if (error) throw error; 
+                inventario = data; 
+                const cG = localStorage.getItem('carritoLaMia'); 
+                if (cG) carrito = JSON.parse(cG); 
+                renderizarCategorias(); renderizarProductos(); actualizarUI(); 
+            } catch (e) { 
+                document.getElementById('productos-container').innerHTML = "<p class='text-center text-red-600 col-span-full'>Error.</p>"; 
+            } finally { ocultarSplash(); } 
+        }
+        
+        function renderizarCategorias() { 
+            const c = [t('cat_todos'), ...new Set(inventario.map(p => p.categoria))]; 
+            const ct = document.getElementById('categorias-container'); 
+            ct.innerHTML = ''; 
+            c.forEach((cat, idx) => { 
+                const activa = (idx === 0 && categoriaActual === null) || cat === categoriaActual; 
+                ct.innerHTML += `<button onclick="filtrarCategoria(${idx === 0 ? 'null' : `'${cat.replace(/'/g, "\\'")}'`})" class="px-5 py-2 rounded-full font-semibold transition shadow-sm ${activa ? 'bg-red-600 text-white shadow-red-600/30' : 'bg-white text-red-600 border border-gray-200 hover:bg-red-50'}">${cat}</button>`; 
+            }); 
+        }
+        
         function filtrarCategoria(c) { categoriaActual = c; renderizarCategorias(); renderizarProductos(); }
 
         function renderizarProductos() {
-            const c = document.getElementById('productos-container'); let pM = categoriaActual === null ? inventario : inventario.filter(p => p.categoria === categoriaActual); pM = pM.filter(p => p.existencia > 0);
+            const c = document.getElementById('productos-container'); 
+            let pM = categoriaActual === null ? inventario : inventario.filter(p => p.categoria === categoriaActual); 
+            pM = pM.filter(p => p.existencia > 0);
             if (textoBusqueda.trim() !== "") pM = pM.filter(p => p.nombre.toLowerCase().includes(textoBusqueda.toLowerCase()));
-            if(pM.length === 0) return c.innerHTML = `<p class='text-center text-gray-500 col-span-full text-xl font-semibold mt-10'>${t('sin_resultados')}</p>`;
-            let h = ''; pM.forEach(p => { const s = p.existencia !== undefined ? p.existencia : 99, sS = s <= 0; h += `<div class="bg-white rounded-xl shadow-md overflow-hidden card-hover ${sS ? 'opacity-50' : ''}"><img src="${p.img}" alt="${p.nombre}" loading="lazy" class="w-full h-40 object-cover"><div class="p-4"><span class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full">${p.categoria}</span><h3 class="font-bold text-lg mt-2">${p.nombre}</h3><p class="text-sm text-gray-500 mb-1">${t('disponibles')} ${sS ? '0' : s}</p><p class="text-2xl font-extrabold text-red-600 my-2">${formatearPrecio(p.venta)}</p><button onclick="agregarCarrito(${p.id})" ${sS ? 'disabled' : ''} class="w-full font-bold py-2 rounded-lg transition ${sS ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700'}">${sS ? t('agotado') : t('agregar')}</button></div></div>`; });
+            
+            if(pM.length === 0) return c.innerHTML = `<div class='col-span-full text-center py-20'><div class='text-6xl mb-4'>😕</div><p class='text-gray-500 text-xl font-semibold'>${t('sin_resultados')}</p></div>`;
+            
+            let h = ''; 
+            pM.forEach(p => { 
+                const s = p.existencia !== undefined ? p.existencia : 99, sS = s <= 0; 
+                h += `
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden card-hover group ${sS ? 'opacity-60 grayscale' : ''}">
+                    <div class="relative overflow-hidden h-44 bg-gray-100">
+                        <img src="${p.img}" alt="${p.nombre}" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-red-600 text-xs font-bold px-3 py-1 rounded-full shadow-sm">${p.categoria}</span>
+                    </div>
+                    <div class="p-5 flex flex-col gap-3">
+                        <h3 class="font-bold text-lg text-gray-800 leading-tight h-12 overflow-hidden">${p.nombre}</h3>
+                        <div class="flex justify-between items-center text-sm text-gray-500 font-medium">
+                            <span>${t('disponibles')} <b class="text-gray-700">${sS ? '0' : s}</b></span>
+                        </div>
+                        <p class="text-3xl font-extrabold text-red-600">${formatearPrecio(p.venta)}</p>
+                        <button onclick="agregarCarrito(${p.id})" ${sS ? 'disabled' : ''} class="w-full font-bold py-3 rounded-xl transition mt-2 flex items-center justify-center gap-2 ${sS ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-600/30 hover:shadow-lg hover:shadow-red-600/40'}">
+                            ${sS ? t('agotado') : '🛒 ' + t('agregar')}
+                        </button>
+                    </div>
+                </div>`; 
+            });
             c.innerHTML = h;
         }
 
         document.getElementById('input-buscar').addEventListener('input', function(e) { clearTimeout(timeoutBusqueda); timeoutBusqueda = setTimeout(() => { textoBusqueda = e.target.value; renderizarProductos(); }, 250); });
 
-        async function agregarCarrito(id) { const p = inventario.find(x => x.id === id); if (p.existencia <= 0) return; const { error } = await supabaseClient.rpc('decrement_stock', { p_id: id, p_qty: 1 }); if (error) return; p.existencia -= 1; const e = carrito.find(i => i.id === id); if (e) e.cantidad += 1; else carrito.push({ id: p.id, nombre: p.nombre, venta: p.venta, cantidad: 1 }); actualizarUI(); renderizarProductos(); mostrarToast(`${p.nombre} ${t('toast_agregado')}`); }
-        async function vaciarCarrito() { if (carrito.length === 0) return; for (const i of carrito) { await supabaseClient.rpc('increment_stock', { p_id: i.id, p_qty: i.cantidad }); const p = inventario.find(x => x.id === i.id); if (p) p.existencia += i.cantidad; } carrito = []; cuponAplicado = null; descuento = 0; document.getElementById('input-cupon').value = ''; localStorage.removeItem('carritoLaMia'); actualizarUI(); renderizarProductos(); mostrarToast(t('toast_carrito_vaciado')); }
+        async function agregarCarrito(id) { 
+            const p = inventario.find(x => x.id === id); 
+            if (p.existencia <= 0) return; 
+            const { error } = await supabaseClient.rpc('decrement_stock', { p_id: id, p_qty: 1 }); 
+            if (error) return; 
+            p.existencia -= 1; 
+            const e = carrito.find(i => i.id === id); 
+            if (e) e.cantidad += 1; 
+            else carrito.push({ id: p.id, nombre: p.nombre, venta: p.venta, cantidad: 1 }); 
+            actualizarUI(); renderizarProductos(); mostrarToast(`${p.nombre} ${t('toast_agregado')}`); 
+        }
+        
+        async function vaciarCarrito() { 
+            if (carrito.length === 0) return; 
+            for (const i of carrito) { 
+                await supabaseClient.rpc('increment_stock', { p_id: i.id, p_qty: i.cantidad }); 
+                const p = inventario.find(x => x.id === i.id); 
+                if (p) p.existencia += i.cantidad; 
+            } 
+            carrito = []; cuponAplicado = null; descuento = 0; 
+            document.getElementById('input-cupon').value = ''; 
+            localStorage.removeItem('carritoLaMia'); 
+            actualizarUI(); renderizarProductos(); mostrarToast(t('toast_carrito_vaciado')); 
+        }
 
         // --- CUPONES ---
         async function aplicarCupon() {
@@ -294,9 +401,9 @@
         function mostrarToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.className = "show"; setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000); }
 
         window.onload = async function() {
-            aplicarIdioma(); // aplicar idioma guardado antes de cargar
-            marcarPushActivoSiExiste(); // pintar botón 🔔 verde si ya está suscrito
-            setTimeout(ocultarSplash, 4000); // red de seguridad: nunca más de 4s
+            aplicarIdioma(); 
+            marcarPushActivoSiExiste(); 
+            setTimeout(ocultarSplash, 4000); 
             await obtenerTasaElToque(); await cargarConfigPedido();
             try { const { data } = await supabaseClient.from('ajustes').select('mantenimiento').eq('id', 1).single(); if (data && data.mantenimiento === true) { document.getElementById('pantalla-mantenimiento').classList.remove('hidden'); ocultarSplash(); } else cargarInventario(); } catch (e) { cargarInventario(); }
         };
