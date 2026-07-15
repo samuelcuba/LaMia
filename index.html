@@ -126,49 +126,49 @@
     <!-- BOTÓN FLOTANTE PARA RESERVAR -->
     <button onclick="abrirModalReserva()" class="fixed bottom-6 left-6 bg-purple-600 text-white p-4 rounded-full shadow-lg hover:bg-purple-700 z-50 flex items-center transition transform hover:scale-110" title="Hacer una reserva">
         <span class="text-2xl">📦</span>
-        <span class="hidden sm:inline ml-2 font-bold text-sm">Reservar</span>
+        <span class="hidden sm:inline ml-2 font-bold text-sm" data-i18n="reservar_btn">Reservar</span>
     </button>
 
     <!-- MODAL DE RESERVA -->
     <div id="modal-reserva" class="hidden fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center p-4 border-b border-gray-200">
-                <h2 class="text-xl font-bold text-gray-800">📦 Hacer una Reserva</h2>
+                <h2 class="text-xl font-bold text-gray-800" data-i18n="reservar_modal_titulo">📦 Hacer una Reserva</h2>
                 <button onclick="cerrarModalReserva()" class="text-gray-400 hover:text-gray-800 text-3xl leading-none">&times;</button>
             </div>
             
             <div class="p-4 overflow-y-auto flex-grow">
-                <p class="text-sm text-gray-600 mb-4 bg-purple-50 text-purple-700 p-2 rounded-lg text-center">Busca lo que necesitas en nuestro catálogo de proveedor. Se abona el <b>50% por adelantado</b> y se coordina la recogida.</p>
+                <p class="text-sm text-gray-600 mb-4 bg-purple-50 text-purple-700 p-2 rounded-lg text-center" data-i18n="reservar_modal_desc">Busca lo que necesitas en nuestro catálogo de proveedor. Se abona el <b>50% por adelantado</b> y se coordina la recogida.</p>
                 
                 <!-- Buscador -->
-                <input type="text" id="buscar-reserva" placeholder="🔎 Ej: 165/70R12 o Neumático..." class="w-full p-3 mb-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 outline-none text-gray-700 font-medium" oninput="buscarProveedor()">
+                <input type="text" id="buscar-reserva" data-i18n-ph="reservar_buscar_ph" placeholder="🔎 Ej: 165/70R12 o Neumático..." class="w-full p-3 mb-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 outline-none text-gray-700 font-medium" oninput="buscarProveedor()">
                 
                 <!-- Resultados -->
                 <div id="resultados-proveedor" class="mb-4 max-h-40 overflow-y-auto border rounded-xl p-2 bg-gray-50">
-                    <p class="text-center text-gray-400 text-sm py-4">Escribe para buscar...</p>
+                    <p class="text-center text-gray-400 text-sm py-4" data-i18n="reservar_buscar_vacio">Escribe para buscar...</p>
                 </div>
 
                 <!-- Carrito de Reserva -->
                 <div class="bg-purple-50 border border-purple-200 rounded-xl p-3 mb-4 min-h-[80px]">
-                    <h3 class="font-bold text-purple-800 mb-2 text-sm">Tu Lista de Reserva:</h3>
+                    <h3 class="font-bold text-purple-800 mb-2 text-sm" data-i18n="reservar_lista_titulo">Tu Lista de Reserva:</h3>
                     <div id="carrito-reserva" class="text-sm">
-                        <p class="text-center text-gray-400 text-sm">Tu reserva está vacía.</p>
+                        <p class="text-center text-gray-400 text-sm" data-i18n="reservar_carrito_vacio">Tu reserva está vacía.</p>
                     </div>
                 </div>
 
                 <!-- Datos del Cliente -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
-                    <input type="text" id="reserva-nombre" placeholder="Tu nombre completo" class="p-2 rounded-lg border-2 border-gray-200 focus:border-purple-500 outline-none text-gray-700 text-sm">
-                    <input type="text" id="reserva-telefono" placeholder="Tu teléfono" class="p-2 rounded-lg border-2 border-gray-200 focus:border-purple-500 outline-none text-gray-700 text-sm">
+                    <input type="text" id="reserva-nombre" data-i18n-ph="reservar_nombre_ph" placeholder="Tu nombre completo" class="p-2 rounded-lg border-2 border-gray-200 focus:border-purple-500 outline-none text-gray-700 text-sm">
+                    <input type="text" id="reserva-telefono" data-i18n-ph="reservar_telefono_ph" placeholder="Tu teléfono" class="p-2 rounded-lg border-2 border-gray-200 focus:border-purple-500 outline-none text-gray-700 text-sm">
                 </div>
             </div>
 
             <div class="p-4 border-t border-gray-200 flex flex-col gap-2">
                 <div class="flex justify-between items-center font-bold text-lg mb-2 text-gray-800">
-                    <span>Total Estimado:</span>
+                    <span data-i18n="reservar_total">Total Estimado:</span>
                     <span id="reserva-total" class="text-purple-600">$0.00</span>
                 </div>
-                <button onclick="enviarReserva()" class="w-full bg-purple-600 text-white py-3 rounded-xl font-bold hover:bg-purple-700 transition flex items-center justify-center gap-2 shadow-md shadow-purple-600/30">
+                <button onclick="enviarReserva()" class="w-full bg-purple-600 text-white py-3 rounded-xl font-bold hover:bg-purple-700 transition flex items-center justify-center gap-2 shadow-md shadow-purple-600/30" data-i18n="reservar_enviar_btn">
                     📩 Enviar Reserva
                 </button>
             </div>
@@ -191,7 +191,7 @@
 
         // ===== MULTI-IDIOMA ES / EN =====
         let idiomaActual = localStorage.getItem('idiomaLaMia') || 'es';
-        const traducciones = {
+                const traducciones = {
             es: {
                 titulo: "La Mia - Tu Tienda Online",
                 hero_titulo: "Todo lo que buscas, en un solo lugar",
@@ -219,7 +219,29 @@
                 push_activado: "Notificaciones activadas ✅",
                 push_denegado: "Permisos denegados. Actívalos en el navegador.",
                 push_no_soportado: "Tu navegador no soporta notificaciones push.",
-                push_error: "Error al activar notificaciones."
+                push_error: "Error al activar notificaciones.",
+                reservar_btn: "Reservar",
+                reservar_modal_titulo: "📦 Hacer una Reserva",
+                reservar_modal_desc: "Busca lo que necesitas en nuestro catálogo de proveedor. Se abona el <b>50% por adelantado</b> y se coordina la recogida.",
+                reservar_buscar_ph: "🔎 Ej: 165/70R12 o Neumático...",
+                reservar_buscar_vacio: "Escribe para buscar...",
+                reservar_sin_resultados: "Sin resultados.",
+                reservar_lista_titulo: "Tu Lista de Reserva:",
+                reservar_carrito_vacio: "Tu reserva está vacía.",
+                reservar_nombre_ph: "Tu nombre completo",
+                reservar_telefono_ph: "Tu teléfono",
+                reservar_total: "Total Estimado:",
+                reservar_enviar_btn: "📩 Enviar Reserva",
+                toast_reserva_vacia: "Tu reserva está vacía.",
+                toast_reserva_datos: "Por favor, ingresa tu nombre y teléfono.",
+                toast_reserva_error: "Error al enviar la reserva. Intenta de nuevo.",
+                toast_reserva_enviada: "✅ Reserva enviada por WhatsApp!",
+                wa_reserva_saludo: "¡Hola! 📦 Quiero hacer una *Reserva Anticipada* en La Mia:",
+                wa_reserva_productos: "Productos:",
+                wa_reserva_subtotal: "Subtotal:",
+                wa_reserva_total_est: "Total Estimado:",
+                wa_reserva_abono: "Abono anticipado (50%):",
+                wa_reserva_coordinar: "¿Coordinamos la entrega y el pago? 🚚"
             },
             en: {
                 titulo: "La Mia - Your Online Store",
@@ -248,7 +270,29 @@
                 push_activado: "Notifications enabled ✅",
                 push_denegado: "Permissions denied. Enable them in your browser.",
                 push_no_soportado: "Your browser doesn't support push notifications.",
-                push_error: "Error enabling notifications."
+                push_error: "Error enabling notifications.",
+                reservar_btn: "Reserve",
+                reservar_modal_titulo: "📦 Make a Reservation",
+                reservar_modal_desc: "Search what you need in our supplier's catalog. A <b>50% advance payment</b> is required and pick-up is coordinated.",
+                reservar_buscar_ph: "🔎 Ex: 165/70R12 or Tire...",
+                reservar_buscar_vacio: "Type to search...",
+                reservar_sin_resultados: "No results.",
+                reservar_lista_titulo: "Your Reservation List:",
+                reservar_carrito_vacio: "Your reservation is empty.",
+                reservar_nombre_ph: "Your full name",
+                reservar_telefono_ph: "Your phone",
+                reservar_total: "Estimated Total:",
+                reservar_enviar_btn: "📩 Send Reservation",
+                toast_reserva_vacia: "Your reservation is empty.",
+                toast_reserva_datos: "Please enter your name and phone number.",
+                toast_reserva_error: "Error sending reservation. Try again.",
+                toast_reserva_enviada: "✅ Reservation sent via WhatsApp!",
+                wa_reserva_saludo: "Hi! 📦 I want to make an *Advance Reservation* at La Mia:",
+                wa_reserva_productos: "Products:",
+                wa_reserva_subtotal: "Subtotal:",
+                wa_reserva_total_est: "Estimated Total:",
+                wa_reserva_abono: "Advance payment (50%):",
+                wa_reserva_coordinar: "Can we coordinate delivery and payment? 🚚"
             }
         };
         function t(k) { return (traducciones[idiomaActual] && traducciones[idiomaActual][k]) || k; }
@@ -510,78 +554,40 @@
             }); 
         }
 
-        // ===== SISTEMA DE RESERVAS (PRE-ORDERS) =====
-        let catalogoProveedor = [];
-        let reservaCarrito = [];
-        let timeoutBuscarProv = null;
+ // ===== SISTEMA DE RESERVAS (PRE-ORDERS) =====
+let catalogoProveedor = [];
+let reservaCarrito = [];
+let timeoutBuscarProv = null;
 
-        async function abrirModalReserva() {
-            document.getElementById('modal-reserva').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-            if (catalogoProveedor.length === 0) {
-                const { data, error } = await supabaseClient.from('catalogo_proveedor').select('*');
-                if (!error) catalogoProveedor = data;
-            }
-            document.getElementById('buscar-reserva').value = '';
-            document.getElementById('resultados-proveedor').innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Escribe para buscar...</p>';
-        }
+async function abrirModalReserva() {
+    document.getElementById('modal-reserva').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    if (catalogoProveedor.length === 0) {
+        const { data, error } = await supabaseClient.from('catalogo_proveedor').select('*');
+        if (!error) catalogoProveedor = data;
+    }
+    document.getElementById('buscar-reserva').value = '';
+    document.getElementById('resultados-proveedor').innerHTML = `<p class="text-center text-gray-400 text-sm py-4">${t('reservar_buscar_vacio')}</p>`;
+}
 
-        function cerrarModalReserva() {
-            document.getElementById('modal-reserva').classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        }
+function cerrarModalReserva() {
+    document.getElementById('modal-reserva').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
 
-        function buscarProveedor() {
-            clearTimeout(timeoutBuscarProv);
-            timeoutBuscarProv = setTimeout(() => {
-                const q = document.getElementById('buscar-reserva').value.toLowerCase();
-                const cont = document.getElementById('resultados-proveedor');
-                if (q.trim() === '') return cont.innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Escribe para buscar...</p>';
-                
-                const filtrados = catalogoProveedor.filter(p => p.nombre.toLowerCase().includes(q) || (p.descripcion && p.descripcion.toLowerCase().includes(q)));
-                if (filtrados.length === 0) return cont.innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Sin resultados.</p>';
-                
-                cont.innerHTML = filtrados.map(p => `
-                    <div class="flex justify-between items-center py-2 border-b last:border-0">
-                        <div class="text-sm text-gray-700 flex-1 pr-2">
-                            <p class="font-semibold">${p.nombre}</p>
-                            <p class="text-xs text-gray-500">${p.descripcion || ''}</p>
-                        </div>
-                        <div class="flex items-center gap-2 flex-shrink-0">
-                            <span class="text-sm font-bold text-purple-600">${formatearPrecio(p.precio_estimado)}</span>
-                            <button onclick="agregarAReserva(${p.id})" class="bg-purple-600 text-white px-2 py-1 rounded-lg text-xs font-bold hover:bg-purple-700">+ Agregar</button>
-                        </div>
-                    </div>
-                `).join('');
-            }, 300);
-        }
-
-        function agregarAReserva(id) {
-            const p = catalogoProveedor.find(x => x.id === id);
-            if (!p) return;
-            const enCarrito = reservaCarrito.find(i => i.id === id);
-            if (enCarrito) {
-                enCarrito.cantidad += 1;
-            } else {
-                reservaCarrito.push({ id: p.id, nombre: p.nombre, descripcion: p.descripcion || '', precio: p.precio_estimado, cantidad: 1 });
-            }
-            document.getElementById('buscar-reserva').value = '';
-            document.getElementById('resultados-proveedor').innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Escribe para buscar...</p>';
-            renderizarCarritoReserva();
-        }
 function buscarProveedor() {
     clearTimeout(timeoutBuscarProv);
     timeoutBuscarProv = setTimeout(() => {
         const q = document.getElementById('buscar-reserva').value.toLowerCase();
         const cont = document.getElementById('resultados-proveedor');
-        if (q.trim() === '') return cont.innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Escribe para buscar...</p>';
+        if (q.trim() === '') return cont.innerHTML = `<p class="text-center text-gray-400 text-sm py-4">${t('reservar_buscar_vacio')}</p>`;
         
         const filtrados = catalogoProveedor.filter(p => 
             p.nombre.toLowerCase().includes(q) || 
             (p.medidas && p.medidas.toLowerCase().includes(q)) || 
             (p.marca && p.marca.toLowerCase().includes(q))
         );
-        if (filtrados.length === 0) return cont.innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Sin resultados.</p>';
+        if (filtrados.length === 0) return cont.innerHTML = `<p class="text-center text-gray-400 text-sm py-4">${t('reservar_sin_resultados')}</p>`;
         
         cont.innerHTML = filtrados.map(p => {
             let detalles = [p.marca, p.modelo, p.serie, p.medidas].filter(Boolean).join(' | ');
@@ -593,7 +599,7 @@ function buscarProveedor() {
                 </div>
                 <div class="flex items-center gap-2 flex-shrink-0">
                     <span class="text-sm font-bold text-purple-600">$${p.precio_venta} USD</span>
-                    <button onclick="agregarAReserva(${p.id})" class="bg-purple-600 text-white px-2 py-1 rounded-lg text-xs font-bold hover:bg-purple-700">+ Agregar</button>
+                    <button onclick="agregarAReserva(${p.id})" class="bg-purple-600 text-white px-2 py-1 rounded-lg text-xs font-bold hover:bg-purple-700">${t('agregar')}</button>
                 </div>
             </div>`;
         }).join('');
@@ -617,7 +623,7 @@ function agregarAReserva(id) {
         });
     }
     document.getElementById('buscar-reserva').value = '';
-    document.getElementById('resultados-proveedor').innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Escribe para buscar...</p>';
+    document.getElementById('resultados-proveedor').innerHTML = `<p class="text-center text-gray-400 text-sm py-4">${t('reservar_buscar_vacio')}</p>`;
     renderizarCarritoReserva();
 }
 
@@ -626,7 +632,7 @@ function renderizarCarritoReserva() {
     const totalEl = document.getElementById('reserva-total');
     
     if (reservaCarrito.length === 0) {
-        cont.innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Tu reserva está vacía.</p>';
+        cont.innerHTML = `<p class="text-center text-gray-400 text-sm py-4">${t('reservar_carrito_vacio')}</p>`;
         totalEl.innerText = formatearPrecio(0);
         return;
     }
@@ -648,7 +654,7 @@ function renderizarCarritoReserva() {
                 </div>
                 <div class="text-right flex flex-col items-end">
                     <p class="font-bold text-gray-700 mb-1">$${subtotal} USD</p>
-                    <button onclick="quitarDeReserva(${i.id})" class="text-red-500 text-xs hover:underline">Quitar</button>
+                    <button onclick="quitarDeReserva(${i.id})" class="text-red-500 text-xs hover:underline">✖</button>
                 </div>
             </div>
         `;
@@ -660,8 +666,8 @@ function renderizarCarritoReserva() {
 async function enviarReserva() {
     const nombre = document.getElementById('reserva-nombre').value.trim();
     const telefono = document.getElementById('reserva-telefono').value.trim();
-    if (reservaCarrito.length === 0) return mostrarToast("Tu reserva está vacía.");
-    if (!nombre || !telefono) return mostrarToast("Por favor, ingresa tu nombre y teléfono.");
+    if (reservaCarrito.length === 0) return mostrarToast(t('toast_reserva_vacia'));
+    if (!nombre || !telefono) return mostrarToast(t('toast_reserva_datos'));
 
     let total = reservaCarrito.reduce((a, i) => a + (i.precio * i.cantidad), 0);
     let montoAbonado = Math.ceil(total / 2);
@@ -681,18 +687,18 @@ async function enviarReserva() {
     };
 
     const { error } = await supabaseClient.from('reservas').insert([nuevaReserva]);
-    if (error) return mostrarToast("Error al enviar la reserva. Intenta de nuevo.");
+    if (error) return mostrarToast(t('toast_reserva_error'));
 
-    let m = `¡Hola! 📦 Quiero hacer una *Reserva Anticipada* en La Mia:\n\n`;
-    m += `*Cliente:* ${nombre}\n*Teléfono:* ${telefono}\n\n*Productos:*\n`;
+    let m = `${t('wa_reserva_saludo')}\n\n`;
+    m += `*${t('wa_reserva_cliente')}:* ${nombre}\n*${t('wa_reserva_telefono')}:* ${telefono}\n\n*${t('wa_reserva_productos')}*\n`;
     reservaCarrito.forEach(i => {
         m += `▪️ ${i.cantidad}x ${i.nombre}`;
         if (i.detalles) m += `\n   (${i.detalles})`;
-        m += `\n   Subtotal: $${i.precio * i.cantidad} USD\n`;
+        m += `\n   ${t('wa_reserva_subtotal')} $${i.precio * i.cantidad} USD\n`;
     });
-    m += `\n*Total Estimado:* $${total} USD`;
-    m += `\n*Abono anticipado (50%):* $${montoAbonado} USD`;
-    m += `\n\n¿Coordinamos la entrega y el pago? 🚚`;
+    m += `\n*${t('wa_reserva_total_est')}* $${total} USD`;
+    m += `\n*${t('wa_reserva_abono')}* $${montoAbonado} USD`;
+    m += `\n\n${t('wa_reserva_coordinar')}`;
 
     let url = canalPedido === 'telegram' && telegramUser ? `https://t.me/${telegramUser}?text=${encodeURIComponent(m)}` : `https://wa.me/5352164100?text=${encodeURIComponent(m)}`;
     window.open(url, '_blank');
@@ -702,71 +708,8 @@ async function enviarReserva() {
     document.getElementById('reserva-telefono').value = '';
     renderizarCarritoReserva();
     cerrarModalReserva();
-    mostrarToast("✅ Reserva enviada por WhatsApp!");
-}
-        
-function quitarDeReserva(id) {
-            reservaCarrito = reservaCarrito.filter(i => i.id !== id);
-            renderizarCarritoReserva();
- }
-
-        function cambiarCantReserva(id, delta) {
-            const item = reservaCarrito.find(i => i.id === id);
-            if (!item) return;
-            item.cantidad += delta;
-            if (item.cantidad <= 0) {
-                reservaCarrito = reservaCarrito.filter(i => i.id !== id);
-            }
-            renderizarCarritoReserva();
-        }
-
-        async function enviarReserva() {
-            const nombre = document.getElementById('reserva-nombre').value.trim();
-            const telefono = document.getElementById('reserva-telefono').value.trim();
-            if (reservaCarrito.length === 0) return mostrarToast("Tu reserva está vacía.");
-            if (!nombre || !telefono) return mostrarToast("Por favor, ingresa tu nombre y teléfono.");
-
-            let total = reservaCarrito.reduce((a, i) => a + (i.precio * i.cantidad), 0);
-            let montoAbonado = Math.ceil(total / 2);
-
-            const nuevaReserva = {
-                cliente_nombre: nombre,
-                cliente_telefono: telefono,
-                productos: JSON.stringify(reservaCarrito.map(i => ({ 
-                    nombre: i.nombre, 
-                    cantidad: i.cantidad, 
-                    precio: i.precio,
-                    descripcion: i.descripcion 
-                }))),
-                total_estimado: total,
-                monto_abonado: montoAbonado,
-                estado: 'pendiente'
-            };
-
-            const { error } = await supabaseClient.from('reservas').insert([nuevaReserva]);
-            if (error) return mostrarToast("Error al enviar la reserva. Intenta de nuevo.");
-
-            let m = `¡Hola! 📦 Quiero hacer una *Reserva Anticipada* en La Mia:\n\n`;
-            m += `*Cliente:* ${nombre}\n*Teléfono:* ${telefono}\n\n*Productos:*\n`;
-            reservaCarrito.forEach(i => {
-                m += `▪️ ${i.cantidad}x ${i.nombre}`;
-                if (i.descripcion) m += `\n   (${i.descripcion})`;
-                m += `\n   Subtotal: ${formatearPrecio(i.precio * i.cantidad)}\n`;
-            });
-            m += `\n*Total Estimado:* ${formatearPrecio(total)}`;
-            m += `\n*Abono anticipado (50%):* ${formatearPrecio(montoAbonado)}`;
-            m += `\n\n¿Coordinamos la entrega y el pago? 🚚`;
-
-            let url = canalPedido === 'telegram' && telegramUser ? `https://t.me/${telegramUser}?text=${encodeURIComponent(m)}` : `https://wa.me/5352164100?text=${encodeURIComponent(m)}`;
-            window.open(url, '_blank');
-
-            reservaCarrito = [];
-            document.getElementById('reserva-nombre').value = '';
-            document.getElementById('reserva-telefono').value = '';
-            renderizarCarritoReserva();
-            cerrarModalReserva();
-            mostrarToast("✅ Reserva enviada por WhatsApp!");
-        }
-    </script>
+    mostrarToast(t('toast_reserva_enviada'));
+}    
+</script>
 </body>
 </html>
