@@ -101,7 +101,10 @@
             <input type="text" id="input-buscar" data-i18n-ph="buscar" placeholder="Buscar producto por nombre..." class="w-full p-4 pl-12 rounded-2xl border-2 border-gray-200 focus:border-red-500 focus:ring-4 focus:ring-red-100 outline-none text-gray-700 shadow-sm transition font-medium">
             <svg class="absolute left-4 top-4 w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
         </div>
+        <!-- Categorías Principales -->
         <div class="flex flex-wrap justify-center gap-2 sm:gap-3" id="categorias-container"></div>
+        <!-- Subcategorías (Aparecen al elegir una categoría) -->
+        <div class="flex flex-wrap justify-center gap-2 sm:gap-3" id="subcategorias-container"></div>
     </div>
 
     <!-- CONTENEDOR DE PRODUCTOS -->
@@ -129,7 +132,7 @@
 
         const VAPID_PUBLIC_KEY = 'BB3So7Bz4lW7xnUVshfZ3A1lu2-OjqApbPfgUuVDMu-mEiWhaGvEIlDSz77BBZYERuv8OBDZdNCvGsD7-ogp3l0';
 
-        let inventario = [], carrito = [], categoriaActual = null, monedaActual = "CUP", textoBusqueda = "", TASA_USD = 660, timeoutBusqueda = null;
+        let inventario = [], let subcategoriaActual = null, carrito = [], categoriaActual = null, monedaActual = "CUP", textoBusqueda = "", TASA_USD = 660, timeoutBusqueda = null;
         let canalPedido = 'whatsapp', telegramUser = '';
         let cuponAplicado = null, descuento = 0; 
         let splashYaOculto = false;
@@ -296,50 +299,90 @@
             } finally { ocultarSplash(); } 
         }
         
-        function renderizarCategorias() { 
-            const c = [t('cat_todos'), ...new Set(inventario.map(p => p.categoria))]; 
-            const ct = document.getElementById('categorias-container'); 
-            ct.innerHTML = ''; 
-            c.forEach((cat, idx) => { 
-                const activa = (idx === 0 && categoriaActual === null) || cat === categoriaActual; 
-                ct.innerHTML += `<button onclick="filtrarCategoria(${idx === 0 ? 'null' : `'${cat.replace(/'/g, "\\'")}'`})" class="px-5 py-2 rounded-full font-semibold transition shadow-sm ${activa ? 'bg-red-600 text-white shadow-red-600/30' : 'bg-white text-red-600 border border-gray-200 hover:bg-red-50'}">${cat}</button>`; 
-            }); 
-        }
+function renderizarCategorias() { 
+    const c = [t('cat_todos'), ...new Set(inventario.map(p => p.categoria))]; 
+    const ct = document.getElementById('categorias-container'); 
+    ct.innerHTML = ''; 
+    // Limpiamos subcategorías al cambiar la principal
+    document.getElementById('subcategorias-container').innerHTML = '';
+    c.forEach((cat, idx) => { 
+        const activa = (idx === 0 && categoriaActual === null) || cat === categoriaActual; 
+        ct.innerHTML += `<button onclick="filtrarCategoria(${idx === 0 ? 'null' : `'${cat.replace(/'/g, "\\'")}'`})" class="px-5 py-2 rounded-full font-semibold transition shadow-sm ${activa ? 'bg-red-600 text-white shadow-red-600/30' : 'bg-white text-red-600 border border-gray-200 hover:bg-red-50'}">${cat}</button>`; 
+    }); 
+}
+
+// NUEVA FUNCIÓN
+function renderizarSubcategorias() {
+    const st = document.getElementById('subcategorias-container');
+    if (!categoriaActual) { st.innerHTML = ''; return; } // Si es "Todos", no hay subcategorías
+    
+    // Obtnemos subcategorías únicas de los productos de esa categoría
+    const subs = [...new Set(inventario.filter(p => p.categoria === categoriaActual && p.subcategoria).map(p => p.subcategoria))];
+    if (subs.length === 0) { st.innerHTML = ''; return; }
+    
+    let html = `<button onclick="filtrarSubcategoria(null)" class="px-4 py-1.5 rounded-full text-sm font-semibold transition ${subcategoriaActual === null ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}">Todas</button>`;
+    subs.forEach(sub => {
+        const activa = sub === subcategoriaActual;
+        html += `<button onclick="filtrarSubcategoria('${sub.replace(/'/g, "\\'")}')" class="px-4 py-1.5 rounded-full text-sm font-semibold transition ${activa ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}">${sub}</button>`;
+    });
+    st.innerHTML = html;
+}
+
+// NUEVA FUNCIÓN
+function filtrarSubcategoria(s) {
+    subcategoriaActual = s;
+    renderizarSubcategorias();
+    renderizarProductos();
+}
         
-        function filtrarCategoria(c) { categoriaActual = c; renderizarCategorias(); renderizarProductos(); }
+function filtrarCategoria(c) { 
+    categoriaActual = c; 
+    subcategoriaActual = null; // Reseteamos subcategoría
+    renderizarCategorias(); 
+    renderizarSubcategorias();
+    renderizarProductos(); 
+}
 
-        function renderizarProductos() {
-            const c = document.getElementById('productos-container'); 
-            let pM = categoriaActual === null ? inventario : inventario.filter(p => p.categoria === categoriaActual); 
-            pM = pM.filter(p => p.existencia > 0);
-            if (textoBusqueda.trim() !== "") pM = pM.filter(p => p.nombre.toLowerCase().includes(textoBusqueda.toLowerCase()));
-            
-            if(pM.length === 0) return c.innerHTML = `<div class='col-span-full text-center py-20'><div class='text-6xl mb-4'>😕</div><p class='text-gray-500 text-xl font-semibold'>${t('sin_resultados')}</p></div>`;
-            
-            let h = ''; 
-            pM.forEach(p => { 
-                const s = p.existencia !== undefined ? p.existencia : 99, sS = s <= 0; 
-                h += `
-                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden card-hover group ${sS ? 'opacity-60 grayscale' : ''}">
-                    <div class="relative overflow-hidden h-44 bg-gray-100">
-                        <img src="${p.img}" alt="${p.nombre}" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                        <span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-red-600 text-xs font-bold px-3 py-1 rounded-full shadow-sm">${p.categoria}</span>
-                    </div>
-                    <div class="p-5 flex flex-col gap-3">
-                        <h3 class="font-bold text-lg text-gray-800 leading-tight h-12 overflow-hidden">${p.nombre}</h3>
-                        <div class="flex justify-between items-center text-sm text-gray-500 font-medium">
-                            <span>${t('disponibles')} <b class="text-gray-700">${sS ? '0' : s}</b></span>
-                        </div>
-                        <p class="text-3xl font-extrabold text-red-600">${formatearPrecio(p.venta)}</p>
-                        <button onclick="agregarCarrito(${p.id})" ${sS ? 'disabled' : ''} class="w-full font-bold py-3 rounded-xl transition mt-2 flex items-center justify-center gap-2 ${sS ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-600/30 hover:shadow-lg hover:shadow-red-600/40'}">
-                            ${sS ? t('agotado') : '🛒 ' + t('agregar')}
-                        </button>
-                    </div>
-                </div>`; 
-            });
-            c.innerHTML = h;
-        }
+function renderizarProductos() {
+    const c = document.getElementById('productos-container'); 
+    let pM = categoriaActual === null ? inventario : inventario.filter(p => p.categoria === categoriaActual); 
+    
+    // FILTRO NUEVO DE SUBCATEGORÍA
+    if (subcategoriaActual !== null) {
+        pM = pM.filter(p => p.subcategoria === subcategoriaActual);
+    }
 
+    pM = pM.filter(p => p.existencia > 0);
+    if (textoBusqueda.trim() !== "") pM = pM.filter(p => p.nombre.toLowerCase().includes(textoBusqueda.toLowerCase()));
+    
+    if(pM.length === 0) return c.innerHTML = `<div class='col-span-full text-center py-20'><div class='text-6xl mb-4'>😕</div><p class='text-gray-500 text-xl font-semibold'>${t('sin_resultados')}</p></div>`;
+    
+    let h = ''; 
+    pM.forEach(p => { 
+        const s = p.existencia !== undefined ? p.existencia : 99, sS = s <= 0; 
+        // Mostramos la subcategoría en la tarjeta si existe
+        const etiqueta = p.subcategoria ? `${p.categoria} - ${p.subcategoria}` : p.categoria;
+        
+        h += `
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden card-hover group ${sS ? 'opacity-60 grayscale' : ''}">
+            <div class="relative overflow-hidden h-44 bg-gray-100">
+                <img src="${p.img}" alt="${p.nombre}" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                <span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-red-600 text-xs font-bold px-3 py-1 rounded-full shadow-sm">${etiqueta}</span>
+            </div>
+            <div class="p-5 flex flex-col gap-3">
+                <h3 class="font-bold text-lg text-gray-800 leading-tight h-12 overflow-hidden">${p.nombre}</h3>
+                <div class="flex justify-between items-center text-sm text-gray-500 font-medium">
+                    <span>${t('disponibles')} <b class="text-gray-700">${sS ? '0' : s}</b></span>
+                </div>
+                <p class="text-3xl font-extrabold text-red-600">${formatearPrecio(p.venta)}</p>
+                <button onclick="agregarCarrito(${p.id})" ${sS ? 'disabled' : ''} class="w-full font-bold py-3 rounded-xl transition mt-2 flex items-center justify-center gap-2 ${sS ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-600/30 hover:shadow-lg hover:shadow-red-600/40'}">
+                    ${sS ? t('agotado') : '🛒 ' + t('agregar')}
+                </button>
+            </div>
+        </div>`; 
+    });
+    c.innerHTML = h;
+}
         document.getElementById('input-buscar').addEventListener('input', function(e) { clearTimeout(timeoutBusqueda); timeoutBusqueda = setTimeout(() => { textoBusqueda = e.target.value; renderizarProductos(); }, 250); });
 
         async function agregarCarrito(id) { 
