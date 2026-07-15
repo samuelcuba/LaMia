@@ -569,11 +569,146 @@
             document.getElementById('resultados-proveedor').innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Escribe para buscar...</p>';
             renderizarCarritoReserva();
         }
+function buscarProveedor() {
+    clearTimeout(timeoutBuscarProv);
+    timeoutBuscarProv = setTimeout(() => {
+        const q = document.getElementById('buscar-reserva').value.toLowerCase();
+        const cont = document.getElementById('resultados-proveedor');
+        if (q.trim() === '') return cont.innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Escribe para buscar...</p>';
+        
+        const filtrados = catalogoProveedor.filter(p => 
+            p.nombre.toLowerCase().includes(q) || 
+            (p.medidas && p.medidas.toLowerCase().includes(q)) || 
+            (p.marca && p.marca.toLowerCase().includes(q))
+        );
+        if (filtrados.length === 0) return cont.innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Sin resultados.</p>';
+        
+        cont.innerHTML = filtrados.map(p => {
+            let detalles = [p.marca, p.modelo, p.serie, p.medidas].filter(Boolean).join(' | ');
+            return `
+            <div class="flex justify-between items-center py-2 border-b last:border-0">
+                <div class="text-sm text-gray-700 flex-1 pr-2">
+                    <p class="font-semibold">${p.nombre}</p>
+                    ${detalles ? `<p class="text-xs text-gray-500">${detalles}</p>` : ''}
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <span class="text-sm font-bold text-purple-600">$${p.precio_venta} USD</span>
+                    <button onclick="agregarAReserva(${p.id})" class="bg-purple-600 text-white px-2 py-1 rounded-lg text-xs font-bold hover:bg-purple-700">+ Agregar</button>
+                </div>
+            </div>`;
+        }).join('');
+    }, 300);
+}
 
-        function quitarDeReserva(id) {
+function agregarAReserva(id) {
+    const p = catalogoProveedor.find(x => x.id === id);
+    if (!p) return;
+    const enCarrito = reservaCarrito.find(i => i.id === id);
+    if (enCarrito) {
+        enCarrito.cantidad += 1;
+    } else {
+        let detalles = [p.marca, p.modelo, p.serie, p.medidas, p.sku ? `SKU: ${p.sku}` : ''].filter(Boolean).join(' | ');
+        reservaCarrito.push({ 
+            id: p.id, 
+            nombre: p.nombre, 
+            detalles: detalles, 
+            precio: p.precio_venta, 
+            cantidad: 1 
+        });
+    }
+    document.getElementById('buscar-reserva').value = '';
+    document.getElementById('resultados-proveedor').innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Escribe para buscar...</p>';
+    renderizarCarritoReserva();
+}
+
+function renderizarCarritoReserva() {
+    const cont = document.getElementById('carrito-reserva');
+    const totalEl = document.getElementById('reserva-total');
+    
+    if (reservaCarrito.length === 0) {
+        cont.innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Tu reserva está vacía.</p>';
+        totalEl.innerText = formatearPrecio(0);
+        return;
+    }
+
+    let total = 0;
+    cont.innerHTML = reservaCarrito.map(i => {
+        let subtotal = i.precio * i.cantidad;
+        total += subtotal;
+        return `
+            <div class="flex justify-between items-center text-sm py-1 border-b last:border-0 border-purple-100">
+                <div class="flex-1 pr-2">
+                    <p class="font-medium text-gray-800">${i.nombre}</p>
+                    ${i.detalles ? `<p class="text-xs text-gray-500 mt-0.5">${i.detalles}</p>` : ''}
+                    <div class="flex items-center gap-2 mt-1">
+                        <button onclick="cambiarCantReserva(${i.id}, -1)" class="bg-gray-200 w-6 h-6 rounded text-xs font-bold hover:bg-gray-300">-</button>
+                        <span class="font-bold text-gray-700">${i.cantidad}</span>
+                        <button onclick="cambiarCantReserva(${i.id}, 1)" class="bg-gray-200 w-6 h-6 rounded text-xs font-bold hover:bg-gray-300">+</button>
+                    </div>
+                </div>
+                <div class="text-right flex flex-col items-end">
+                    <p class="font-bold text-gray-700 mb-1">$${subtotal} USD</p>
+                    <button onclick="quitarDeReserva(${i.id})" class="text-red-500 text-xs hover:underline">Quitar</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    totalEl.innerText = `$${total} USD`;
+}
+
+async function enviarReserva() {
+    const nombre = document.getElementById('reserva-nombre').value.trim();
+    const telefono = document.getElementById('reserva-telefono').value.trim();
+    if (reservaCarrito.length === 0) return mostrarToast("Tu reserva está vacía.");
+    if (!nombre || !telefono) return mostrarToast("Por favor, ingresa tu nombre y teléfono.");
+
+    let total = reservaCarrito.reduce((a, i) => a + (i.precio * i.cantidad), 0);
+    let montoAbonado = Math.ceil(total / 2);
+
+    const nuevaReserva = {
+        cliente_nombre: nombre,
+        cliente_telefono: telefono,
+        productos: JSON.stringify(reservaCarrito.map(i => ({ 
+            nombre: i.nombre, 
+            cantidad: i.cantidad, 
+            precio: i.precio,
+            detalles: i.detalles 
+        }))),
+        total_estimado: total,
+        monto_abonado: montoAbonado,
+        estado: 'pendiente'
+    };
+
+    const { error } = await supabaseClient.from('reservas').insert([nuevaReserva]);
+    if (error) return mostrarToast("Error al enviar la reserva. Intenta de nuevo.");
+
+    let m = `¡Hola! 📦 Quiero hacer una *Reserva Anticipada* en La Mia:\n\n`;
+    m += `*Cliente:* ${nombre}\n*Teléfono:* ${telefono}\n\n*Productos:*\n`;
+    reservaCarrito.forEach(i => {
+        m += `▪️ ${i.cantidad}x ${i.nombre}`;
+        if (i.detalles) m += `\n   (${i.detalles})`;
+        m += `\n   Subtotal: $${i.precio * i.cantidad} USD\n`;
+    });
+    m += `\n*Total Estimado:* $${total} USD`;
+    m += `\n*Abono anticipado (50%):* $${montoAbonado} USD`;
+    m += `\n\n¿Coordinamos la entrega y el pago? 🚚`;
+
+    let url = canalPedido === 'telegram' && telegramUser ? `https://t.me/${telegramUser}?text=${encodeURIComponent(m)}` : `https://wa.me/5352164100?text=${encodeURIComponent(m)}`;
+    window.open(url, '_blank');
+
+    reservaCarrito = [];
+    document.getElementById('reserva-nombre').value = '';
+    document.getElementById('reserva-telefono').value = '';
+    renderizarCarritoReserva();
+    cerrarModalReserva();
+    mostrarToast("✅ Reserva enviada por WhatsApp!");
+}
+        
+function quitarDeReserva(id) {
             reservaCarrito = reservaCarrito.filter(i => i.id !== id);
             renderizarCarritoReserva();
-        }
+ }
 
         function cambiarCantReserva(id, delta) {
             const item = reservaCarrito.find(i => i.id === id);
@@ -583,42 +718,6 @@
                 reservaCarrito = reservaCarrito.filter(i => i.id !== id);
             }
             renderizarCarritoReserva();
-        }
-
-        function renderizarCarritoReserva() {
-            const cont = document.getElementById('carrito-reserva');
-            const totalEl = document.getElementById('reserva-total');
-            
-            if (reservaCarrito.length === 0) {
-                cont.innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Tu reserva está vacía.</p>';
-                totalEl.innerText = formatearPrecio(0);
-                return;
-            }
-
-            let total = 0;
-            cont.innerHTML = reservaCarrito.map(i => {
-                let subtotal = i.precio * i.cantidad;
-                total += subtotal;
-                return `
-                    <div class="flex justify-between items-center text-sm py-1 border-b last:border-0 border-purple-100">
-                        <div class="flex-1 pr-2">
-                            <p class="font-medium text-gray-800">${i.nombre}</p>
-                            ${i.descripcion ? `<p class="text-xs text-gray-500 mt-0.5">${i.descripcion}</p>` : ''}
-                            <div class="flex items-center gap-2 mt-1">
-                                <button onclick="cambiarCantReserva(${i.id}, -1)" class="bg-gray-200 w-6 h-6 rounded text-xs font-bold hover:bg-gray-300">-</button>
-                                <span class="font-bold text-gray-700">${i.cantidad}</span>
-                                <button onclick="cambiarCantReserva(${i.id}, 1)" class="bg-gray-200 w-6 h-6 rounded text-xs font-bold hover:bg-gray-300">+</button>
-                            </div>
-                        </div>
-                        <div class="text-right flex flex-col items-end">
-                            <p class="font-bold text-gray-700 mb-1">${formatearPrecio(subtotal)}</p>
-                            <button onclick="quitarDeReserva(${i.id})" class="text-red-500 text-xs hover:underline">Quitar</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            totalEl.innerText = formatearPrecio(total);
         }
 
         async function enviarReserva() {
