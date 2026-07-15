@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- TipografModerna -->
+    <!-- Tipografía Moderna -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -51,17 +51,17 @@
 
     <!-- SPLASH ANIMADA -->
     <div id="splash-screen">
-        <div class="splash-logo">??</div>
-        <div class="splash-nombre">???? La Mia</div>
+        <div class="splash-logo">🛒</div>
+        <div class="splash-nombre">🇨🇺 La Mia</div>
         <div class="splash-sub">Tu Tienda Online</div>
         <div class="splash-spinner"></div>
     </div>
 
     <!-- PANTALLA DE MANTENIMIENTO -->
     <div id="pantalla-mantenimiento" class="hidden fixed inset-0 bg-gray-900 text-white z-[100] flex flex-col items-center justify-center p-6 text-center">
-        <div class="text-7xl mb-6 animate-bounce">???</div>
+        <div class="text-7xl mb-6 animate-bounce">🛠️</div>
         <h1 class="text-4xl font-extrabold text-yellow-500 mb-4" data-i18n="mant_titulo">Mantenimiento Programado</h1>
-        <p class="text-xl text-gray-300 max-w-md mb-6" data-i18n-mant-texto>Estamos actualizando nuestro inventario para ofrecerte los mejores productos. olveremos pronto!</p>
+        <p class="text-xl text-gray-300 max-w-md mb-6" data-i18n-mant-texto>Estamos actualizando nuestro inventario para ofrecerte los mejores productos. ¡Volveremos pronto!</p>
         <p class="text-gray-500">La Mia &#x1F1E8;&#x1F1FA;</p>
     </div>
 
@@ -69,17 +69,17 @@
     <header class="bg-red-600/95 backdrop-blur-md text-white shadow-lg sticky top-0 z-50 border-b border-red-700/50">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <h1 class="text-2xl font-extrabold tracking-tight flex items-center gap-1">
-                ?? <span class="hidden sm:inline">La Mia</span>
+                🛒 <span class="hidden sm:inline">La Mia</span>
             </h1>
             <div class="flex items-center gap-2 sm:gap-3">
-                <button onclick="cambiarIdioma()" id="btn-idioma" class="bg-white/20 hover:bg-white/40 text-white font-bold p-2 rounded-full text-lg transition" title="Cambiar idioma">????</button>
-                <button onclick="activarPush()" id="btn-push" class="bg-white/20 hover:bg-white/40 text-white font-bold p-2 rounded-full text-lg transition" title="Notificaciones">??</button>
+                <button onclick="cambiarIdioma()" id="btn-idioma" class="bg-white/20 hover:bg-white/40 text-white font-bold p-2 rounded-full text-lg transition" title="Cambiar idioma">🇨🇺</button>
+                <button onclick="activarPush()" id="btn-push" class="bg-white/20 hover:bg-white/40 text-white font-bold p-2 rounded-full text-lg transition" title="Notificaciones">🔔</button>
                 <div class="bg-white/20 p-1 rounded-full text-xs flex">
                     <button onclick="cambiarMoneda('CUP')" id="btn-cup" class="px-3 py-1 bg-white text-red-600 rounded-full font-bold transition">CUP</button>
                     <button onclick="cambiarMoneda('USD')" id="btn-usd" class="px-3 py-1 text-white font-bold transition">USD</button>
                 </div>
                 <div class="bg-white text-red-600 font-bold py-2 px-4 rounded-full text-sm flex items-center gap-2 shadow-md">
-                    <span>?? <span id="cart-count">0</span></span>
+                    <span>🛒 <span id="cart-count">0</span></span>
                     <button onclick="vaciarCarrito()" class="text-red-400 hover:text-red-700 font-bold text-lg leading-none ml-1" title="Vaciar carrito">&times;</button>
                 </div>
             </div>
@@ -91,41 +91,41 @@
         <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
         <div class="container mx-auto px-4 relative z-10">
             <h2 class="text-3xl md:text-5xl font-extrabold mb-3 drop-shadow-md" data-i18n="hero_titulo">Todo lo que buscas, en un solo lugar</h2>
-            <p class="text-base md:text-lg font-medium max-w-2xl mx-auto bg-black/20 inline-block px-4 py-2 rounded-full" data-i18n-hero-sub>Pagos en efectivo (CUP) ???? | Entrega a domicilio o punto de encuentro</p>
+            <p class="text-base md:text-lg font-medium max-w-2xl mx-auto bg-black/20 inline-block px-4 py-2 rounded-full" data-i18n-hero-sub>Pagos en efectivo (CUP) 🇨🇺 | Entrega a domicilio o punto de encuentro</p>
         </div>
     </section>
 
-    <!-- BUSCADOR Y CATEGOR΁S -->
+    <!-- BUSCADOR Y CATEGORÍAS -->
     <div class="container mx-auto px-4 py-8 flex flex-col gap-4">
         <div class="relative w-full sm:max-w-md mx-auto">
             <input type="text" id="input-buscar" data-i18n-ph="buscar" placeholder="Buscar producto por nombre..." class="w-full p-4 pl-12 rounded-2xl border-2 border-gray-200 focus:border-red-500 focus:ring-4 focus:ring-red-100 outline-none text-gray-700 shadow-sm transition font-medium">
             <svg class="absolute left-4 top-4 w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
         </div>
-        <!-- Categor Principales -->
+        <!-- Categorías Principales -->
         <div class="flex flex-wrap justify-center gap-2 sm:gap-3" id="categorias-container"></div>
-        <!-- Subcategor (Aparecen al elegir una categor -->
+        <!-- Subcategorías (Aparecen al elegir una categoría) -->
         <div class="flex flex-wrap justify-center gap-2 sm:gap-3" id="subcategorias-container"></div>
     </div>
 
     <!-- CONTENEDOR DE PRODUCTOS -->
     <main class="container mx-auto px-4 pb-24 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="productos-container"></main>
 
-    <!-- BARRA DE CUPԎ -->
+    <!-- BARRA DE CUPÓN -->
     <div id="cupon-bar" class="hidden fixed bottom-24 right-6 bg-white p-2 rounded-lg shadow-lg z-50 flex items-center gap-2 border-2 border-purple-500">
-        <input type="text" id="input-cupon" data-i18n-ph="cupon_ph" placeholder="C󤩧o cup󮢠class="p-1 text-sm border rounded w-28 focus:outline-none">
+        <input type="text" id="input-cupon" data-i18n-ph="cupon_ph" placeholder="Código cupón" class="p-1 text-sm border rounded w-28 focus:outline-none">
         <button onclick="aplicarCupon()" class="bg-purple-600 text-white px-2 py-1 text-sm rounded font-bold">OK</button>
     </div>
 
-    <!-- BOTԎ FLOTANTE WHATSAPP -->
+    <!-- BOTÓN FLOTANTE WHATSAPP -->
     <a href="#" id="whatsapp-btn" onclick="return finalizarPedido(event)" class="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 z-50 flex items-center transition transform hover:scale-110">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
             <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.493.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.929 4.664c-.004 3.626-2.962 6.584-6.59 6.584zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.629.775-.114.133-.232.148-.43.05-.197-.099-.836-.308-1.592-.985-.59-.523-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.132.065-.246.033-.346-.033-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.837.328 1.122.421.473.151.904.129 1.246.08.38-.058 1.171-.479 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
         </svg>
     </a>
 
-        <!-- BOTԎ FLOTANTE PARA RESERVAR -->
+    <!-- BOTÓN FLOTANTE PARA RESERVAR -->
     <button onclick="abrirModalReserva()" class="fixed bottom-6 left-6 bg-purple-600 text-white p-4 rounded-full shadow-lg hover:bg-purple-700 z-50 flex items-center transition transform hover:scale-110" title="Hacer una reserva">
-        <span class="text-2xl">??</span>
+        <span class="text-2xl">📦</span>
         <span class="hidden sm:inline ml-2 font-bold text-sm">Reservar</span>
     </button>
 
@@ -133,15 +133,15 @@
     <div id="modal-reserva" class="hidden fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center p-4 border-b border-gray-200">
-                <h2 class="text-xl font-bold text-gray-800">?? Hacer una Reserva</h2>
+                <h2 class="text-xl font-bold text-gray-800">📦 Hacer una Reserva</h2>
                 <button onclick="cerrarModalReserva()" class="text-gray-400 hover:text-gray-800 text-3xl leading-none">&times;</button>
             </div>
             
             <div class="p-4 overflow-y-auto flex-grow">
-                <p class="text-sm text-gray-600 mb-4 bg-purple-50 text-purple-700 p-2 rounded-lg text-center">Busca lo que necesitas en nuestro cat⭯go de proveedor. Se abona el <b>50% por adelantado</b> y se coordina la recogida.</p>
+                <p class="text-sm text-gray-600 mb-4 bg-purple-50 text-purple-700 p-2 rounded-lg text-center">Busca lo que necesitas en nuestro catálogo de proveedor. Se abona el <b>50% por adelantado</b> y se coordina la recogida.</p>
                 
                 <!-- Buscador -->
-                <input type="text" id="buscar-reserva" placeholder="?? Ej: 165/70R12 o Neum⵩co..." class="w-full p-3 mb-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 outline-none text-gray-700 font-medium" oninput="buscarProveedor()">
+                <input type="text" id="buscar-reserva" placeholder="🔎 Ej: 165/70R12 o Neumático..." class="w-full p-3 mb-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 outline-none text-gray-700 font-medium" oninput="buscarProveedor()">
                 
                 <!-- Resultados -->
                 <div id="resultados-proveedor" class="mb-4 max-h-40 overflow-y-auto border rounded-xl p-2 bg-gray-50">
@@ -152,14 +152,14 @@
                 <div class="bg-purple-50 border border-purple-200 rounded-xl p-3 mb-4 min-h-[80px]">
                     <h3 class="font-bold text-purple-800 mb-2 text-sm">Tu Lista de Reserva:</h3>
                     <div id="carrito-reserva" class="text-sm">
-                        <p class="text-center text-gray-400 text-sm">Tu reserva estᡶac</p>
+                        <p class="text-center text-gray-400 text-sm">Tu reserva está vacía.</p>
                     </div>
                 </div>
 
                 <!-- Datos del Cliente -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
                     <input type="text" id="reserva-nombre" placeholder="Tu nombre completo" class="p-2 rounded-lg border-2 border-gray-200 focus:border-purple-500 outline-none text-gray-700 text-sm">
-                    <input type="text" id="reserva-telefono" placeholder="Tu telꧯno" class="p-2 rounded-lg border-2 border-gray-200 focus:border-purple-500 outline-none text-gray-700 text-sm">
+                    <input type="text" id="reserva-telefono" placeholder="Tu teléfono" class="p-2 rounded-lg border-2 border-gray-200 focus:border-purple-500 outline-none text-gray-700 text-sm">
                 </div>
             </div>
 
@@ -169,13 +169,13 @@
                     <span id="reserva-total" class="text-purple-600">$0.00</span>
                 </div>
                 <button onclick="enviarReserva()" class="w-full bg-purple-600 text-white py-3 rounded-xl font-bold hover:bg-purple-700 transition flex items-center justify-center gap-2 shadow-md shadow-purple-600/30">
-                    ?? Enviar Reserva
+                    📩 Enviar Reserva
                 </button>
             </div>
         </div>
     </div>
 
-    <div id="toast">Producto agregado al carrito ??</div>
+    <div id="toast">Producto agregado al carrito 🛒</div>
 
     <script>
         const SUPABASE_URL = 'https://xwaodoprvfzzszohyrlh.supabase.co';
@@ -184,7 +184,7 @@
 
         const VAPID_PUBLIC_KEY = 'BB3So7Bz4lW7xnUVshfZ3A1lu2-OjqApbPfgUuVDMu-mEiWhaGvEIlDSz77BBZYERuv8OBDZdNCvGsD7-ogp3l0';
 
-        let inventario = [], subcategoriaActual = null, carrito = [], categoriaActual = null, monedaActual = "CUP", textoBusqueda = "", TASA_USD = 660, timeoutBusqueda = null;
+        let inventario = [], carrito = [], categoriaActual = null, subcategoriaActual = null, monedaActual = "CUP", textoBusqueda = "", TASA_USD = 660, timeoutBusqueda = null;
         let canalPedido = 'whatsapp', telegramUser = '';
         let cuponAplicado = null, descuento = 0; 
         let splashYaOculto = false;
@@ -195,57 +195,57 @@
             es: {
                 titulo: "La Mia - Tu Tienda Online",
                 hero_titulo: "Todo lo que buscas, en un solo lugar",
-                hero_sub: "Pagos en efectivo (CUP) ???? | Entrega a domicilio o punto de encuentro",
-                buscar: "?? Buscar producto por nombre...",
+                hero_sub: "Pagos en efectivo (CUP) 🇨🇺 | Entrega a domicilio o punto de encuentro",
+                buscar: "🔎 Buscar producto por nombre...",
                 cat_todos: "Todos",
-                sin_resultados: "No se encontraron productos... ??",
+                sin_resultados: "No se encontraron productos... 🤔",
                 disponibles: "Disponibles:",
                 agotado: "Agotado",
                 agregar: "Agregar",
-                cupon_ph: "C󤩧o cup󮢬
+                cupon_ph: "Código cupón",
                 toast_agregado: "agregado!",
-                toast_carrito_vaciado: "Carrito vaciado ???",
-                toast_cupon_invalido: "Cup󮠩nv⭩do ?",
-                toast_pedido_enviado: "edido enviado! ??",
-                toast_cupon_aplicado: "Cup󮠡plicado",
-                wa_saludo: "ola! ?? Quiero hacer el siguiente pedido en La Mia:",
+                toast_carrito_vaciado: "Carrito vaciado 🗑️",
+                toast_cupon_invalido: "Cupón inválido ❌",
+                toast_pedido_enviado: "¡Pedido enviado! 🎉",
+                toast_cupon_aplicado: "Cupón aplicado",
+                wa_saludo: "¡Hola! 🛒 Quiero hacer el siguiente pedido en La Mia:",
                 wa_descuento: "Descuento",
                 wa_total: "Total a pagar",
-                wa_coordinar: "ࠃoordinamos la entrega? ??",
+                wa_coordinar: "¿Coordinamos la entrega? 🚚",
                 mant_titulo: "Mantenimiento Programado",
-                mant_texto: "Estamos actualizando nuestro inventario para ofrecerte los mejores productos. olveremos pronto!",
-                btn_idioma_otro: "????",
+                mant_texto: "Estamos actualizando nuestro inventario para ofrecerte los mejores productos. ¡Volveremos pronto!",
+                btn_idioma_otro: "🇺🇸",
                 push_activar: "Activar notificaciones",
-                push_activado: "Notificaciones activadas ?",
-                push_denegado: "Permisos denegados. Actlos en el navegador.",
+                push_activado: "Notificaciones activadas ✅",
+                push_denegado: "Permisos denegados. Actívalos en el navegador.",
                 push_no_soportado: "Tu navegador no soporta notificaciones push.",
                 push_error: "Error al activar notificaciones."
             },
             en: {
                 titulo: "La Mia - Your Online Store",
                 hero_titulo: "Everything you need, in one place",
-                hero_sub: "Cash payments (CUP) ???? | Home delivery or meeting point",
-                buscar: "?? Search product by name...",
+                hero_sub: "Cash payments (CUP) 🇨🇺 | Home delivery or meeting point",
+                buscar: "🔎 Search product by name...",
                 cat_todos: "All",
-                sin_resultados: "No products found... ??",
+                sin_resultados: "No products found... 🤔",
                 disponibles: "Available:",
                 agotado: "Sold out",
                 agregar: "Add",
                 cupon_ph: "Coupon code",
                 toast_agregado: "added!",
-                toast_carrito_vaciado: "Cart emptied ???",
-                toast_cupon_invalido: "Invalid coupon ?",
-                toast_pedido_enviado: "Order sent! ??",
+                toast_carrito_vaciado: "Cart emptied 🗑️",
+                toast_cupon_invalido: "Invalid coupon ❌",
+                toast_pedido_enviado: "Order sent! 🎉",
                 toast_cupon_aplicado: "Coupon applied",
-                wa_saludo: "Hi! ?? I'd like to place this order at La Mia:",
+                wa_saludo: "Hi! 🛒 I'd like to place this order at La Mia:",
                 wa_descuento: "Discount",
                 wa_total: "Total to pay",
-                wa_coordinar: "Can we arrange delivery? ??",
+                wa_coordinar: "Can we arrange delivery? 🚚",
                 mant_titulo: "Scheduled Maintenance",
                 mant_texto: "We're updating our inventory to offer you the best products. We'll be back soon!",
-                btn_idioma_otro: "????",
+                btn_idioma_otro: "🇨🇺",
                 push_activar: "Enable notifications",
-                push_activado: "Notifications enabled ?",
+                push_activado: "Notifications enabled ✅",
                 push_denegado: "Permissions denied. Enable them in your browser.",
                 push_no_soportado: "Your browser doesn't support push notifications.",
                 push_error: "Error enabling notifications."
@@ -351,90 +351,80 @@
             } finally { ocultarSplash(); } 
         }
         
-function renderizarCategorias() { 
-    const c = [t('cat_todos'), ...new Set(inventario.map(p => p.categoria))]; 
-    const ct = document.getElementById('categorias-container'); 
-    ct.innerHTML = ''; 
-    // Limpiamos subcategor al cambiar la principal
-    document.getElementById('subcategorias-container').innerHTML = '';
-    c.forEach((cat, idx) => { 
-        const activa = (idx === 0 && categoriaActual === null) || cat === categoriaActual; 
-        ct.innerHTML += `<button onclick="filtrarCategoria(${idx === 0 ? 'null' : `'${cat.replace(/'/g, "\\'")}'`})" class="px-5 py-2 rounded-full font-semibold transition shadow-sm ${activa ? 'bg-red-600 text-white shadow-red-600/30' : 'bg-white text-red-600 border border-gray-200 hover:bg-red-50'}">${cat}</button>`; 
-    }); 
-}
-
-// NUEVA FUNCIԎ
-function renderizarSubcategorias() {
-    const st = document.getElementById('subcategorias-container');
-    if (!categoriaActual) { st.innerHTML = ''; return; } // Si es "Todos", no hay subcategor
-    
-    // Obtnemos subcategor 򮩣as de los productos de esa categor
-    const subs = [...new Set(inventario.filter(p => p.categoria === categoriaActual && p.subcategoria).map(p => p.subcategoria))];
-    if (subs.length === 0) { st.innerHTML = ''; return; }
-    
-    let html = `<button onclick="filtrarSubcategoria(null)" class="px-4 py-1.5 rounded-full text-sm font-semibold transition ${subcategoriaActual === null ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}">Todas</button>`;
-    subs.forEach(sub => {
-        const activa = sub === subcategoriaActual;
-        html += `<button onclick="filtrarSubcategoria('${sub.replace(/'/g, "\\'")}')" class="px-4 py-1.5 rounded-full text-sm font-semibold transition ${activa ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}">${sub}</button>`;
-    });
-    st.innerHTML = html;
-}
-
-// NUEVA FUNCIԎ
-function filtrarSubcategoria(s) {
-    subcategoriaActual = s;
-    renderizarSubcategorias();
-    renderizarProductos();
-}
+        function renderizarCategorias() { 
+            const c = [t('cat_todos'), ...new Set(inventario.map(p => p.categoria))]; 
+            const ct = document.getElementById('categorias-container'); 
+            ct.innerHTML = ''; 
+            document.getElementById('subcategorias-container').innerHTML = '';
+            c.forEach((cat, idx) => { 
+                const activa = (idx === 0 && categoriaActual === null) || cat === categoriaActual; 
+                ct.innerHTML += `<button onclick="filtrarCategoria(${idx === 0 ? 'null' : `'${cat.replace(/'/g, "\\'")}'`})" class="px-5 py-2 rounded-full font-semibold transition shadow-sm ${activa ? 'bg-red-600 text-white shadow-red-600/30' : 'bg-white text-red-600 border border-gray-200 hover:bg-red-50'}">${cat}</button>`; 
+            }); 
+        }
         
-function filtrarCategoria(c) { 
-    categoriaActual = c; 
-    subcategoriaActual = null; // Reseteamos subcategor
-    renderizarCategorias(); 
-    renderizarSubcategorias();
-    renderizarProductos(); 
-}
+        function filtrarCategoria(c) { 
+            categoriaActual = c; 
+            subcategoriaActual = null; 
+            renderizarCategorias(); 
+            renderizarSubcategorias();
+            renderizarProductos(); 
+        }
 
-function renderizarProductos() {
-    const c = document.getElementById('productos-container'); 
-    let pM = categoriaActual === null ? inventario : inventario.filter(p => p.categoria === categoriaActual); 
-    
-    // FILTRO NUEVO DE SUBCATEGOR΁
-    if (subcategoriaActual !== null) {
-        pM = pM.filter(p => p.subcategoria === subcategoriaActual);
-    }
+        function renderizarSubcategorias() {
+            const st = document.getElementById('subcategorias-container');
+            if (!categoriaActual) { st.innerHTML = ''; return; } 
+            const subs = [...new Set(inventario.filter(p => p.categoria === categoriaActual && p.subcategoria).map(p => p.subcategoria))];
+            if (subs.length === 0) { st.innerHTML = ''; return; }
+            let html = `<button onclick="filtrarSubcategoria(null)" class="px-4 py-1.5 rounded-full text-sm font-semibold transition ${subcategoriaActual === null ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}">Todas</button>`;
+            subs.forEach(sub => {
+                const activa = sub === subcategoriaActual;
+                html += `<button onclick="filtrarSubcategoria('${sub.replace(/'/g, "\\'")}')" class="px-4 py-1.5 rounded-full text-sm font-semibold transition ${activa ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}">${sub}</button>`;
+            });
+            st.innerHTML = html;
+        }
 
-    pM = pM.filter(p => p.existencia > 0);
-    if (textoBusqueda.trim() !== "") pM = pM.filter(p => p.nombre.toLowerCase().includes(textoBusqueda.toLowerCase()));
-    
-    if(pM.length === 0) return c.innerHTML = `<div class='col-span-full text-center py-20'><div class='text-6xl mb-4'>??</div><p class='text-gray-500 text-xl font-semibold'>${t('sin_resultados')}</p></div>`;
-    
-    let h = ''; 
-    pM.forEach(p => { 
-        const s = p.existencia !== undefined ? p.existencia : 99, sS = s <= 0; 
-        // Mostramos la subcategoren la tarjeta si existe
-        const etiqueta = p.subcategoria ? `${p.categoria} - ${p.subcategoria}` : p.categoria;
-        
-        h += `
-        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden card-hover group ${sS ? 'opacity-60 grayscale' : ''}">
-            <div class="relative overflow-hidden h-44 bg-gray-100">
-                <img src="${p.img}" alt="${p.nombre}" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                <span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-red-600 text-xs font-bold px-3 py-1 rounded-full shadow-sm">${etiqueta}</span>
-            </div>
-            <div class="p-5 flex flex-col gap-3">
-                <h3 class="font-bold text-lg text-gray-800 leading-tight h-12 overflow-hidden">${p.nombre}</h3>
-                <div class="flex justify-between items-center text-sm text-gray-500 font-medium">
-                    <span>${t('disponibles')} <b class="text-gray-700">${sS ? '0' : s}</b></span>
-                </div>
-                <p class="text-3xl font-extrabold text-red-600">${formatearPrecio(p.venta)}</p>
-                <button onclick="agregarCarrito(${p.id})" ${sS ? 'disabled' : ''} class="w-full font-bold py-3 rounded-xl transition mt-2 flex items-center justify-center gap-2 ${sS ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-600/30 hover:shadow-lg hover:shadow-red-600/40'}">
-                    ${sS ? t('agotado') : '?? ' + t('agregar')}
-                </button>
-            </div>
-        </div>`; 
-    });
-    c.innerHTML = h;
-}
+        function filtrarSubcategoria(s) {
+            subcategoriaActual = s;
+            renderizarSubcategorias();
+            renderizarProductos();
+        }
+
+        function renderizarProductos() {
+            const c = document.getElementById('productos-container'); 
+            let pM = categoriaActual === null ? inventario : inventario.filter(p => p.categoria === categoriaActual); 
+            if (subcategoriaActual !== null) {
+                pM = pM.filter(p => p.subcategoria === subcategoriaActual);
+            }
+            pM = pM.filter(p => p.existencia > 0);
+            if (textoBusqueda.trim() !== "") pM = pM.filter(p => p.nombre.toLowerCase().includes(textoBusqueda.toLowerCase()));
+            
+            if(pM.length === 0) return c.innerHTML = `<div class='col-span-full text-center py-20'><div class='text-6xl mb-4'>😕</div><p class='text-gray-500 text-xl font-semibold'>${t('sin_resultados')}</p></div>`;
+            
+            let h = ''; 
+            pM.forEach(p => { 
+                const s = p.existencia !== undefined ? p.existencia : 99, sS = s <= 0; 
+                const etiqueta = p.subcategoria ? `${p.categoria} - ${p.subcategoria}` : p.categoria;
+                h += `
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden card-hover group ${sS ? 'opacity-60 grayscale' : ''}">
+                    <div class="relative overflow-hidden h-44 bg-gray-100">
+                        <img src="${p.img}" alt="${p.nombre}" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-red-600 text-xs font-bold px-3 py-1 rounded-full shadow-sm">${etiqueta}</span>
+                    </div>
+                    <div class="p-5 flex flex-col gap-3">
+                        <h3 class="font-bold text-lg text-gray-800 leading-tight h-12 overflow-hidden">${p.nombre}</h3>
+                        <div class="flex justify-between items-center text-sm text-gray-500 font-medium">
+                            <span>${t('disponibles')} <b class="text-gray-700">${sS ? '0' : s}</b></span>
+                        </div>
+                        <p class="text-3xl font-extrabold text-red-600">${formatearPrecio(p.venta)}</p>
+                        <button onclick="agregarCarrito(${p.id})" ${sS ? 'disabled' : ''} class="w-full font-bold py-3 rounded-xl transition mt-2 flex items-center justify-center gap-2 ${sS ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-600/30 hover:shadow-lg hover:shadow-red-600/40'}">
+                            ${sS ? t('agotado') : '🛒 ' + t('agregar')}
+                        </button>
+                    </div>
+                </div>`; 
+            });
+            c.innerHTML = h;
+        }
+
         document.getElementById('input-buscar').addEventListener('input', function(e) { clearTimeout(timeoutBusqueda); timeoutBusqueda = setTimeout(() => { textoBusqueda = e.target.value; renderizarProductos(); }, 250); });
 
         async function agregarCarrito(id) { 
@@ -469,7 +459,7 @@ function renderizarProductos() {
             const { data, error } = await supabaseClient.from('cupones').select('*').eq('codigo', cod).eq('activo', true).single();
             if (error || !data) { mostrarToast(t('toast_cupon_invalido')); cuponAplicado = null; descuento = 0; actualizarUI(); return; }
             cuponAplicado = data.codigo; descuento = data.porcentaje;
-            mostrarToast(`${t('toast_cupon_aplicado')}: -${descuento}% ???`); actualizarUI();
+            mostrarToast(`${t('toast_cupon_aplicado')}: -${descuento}% 🎟️`); actualizarUI();
         }
 
         function actualizarUI() {
@@ -493,23 +483,31 @@ function renderizarProductos() {
             carrito = []; cuponAplicado = null; descuento = 0; document.getElementById('input-cupon').value = ''; localStorage.removeItem('carritoLaMia'); actualizarUI(); mostrarToast(t('toast_pedido_enviado')); window.open(lW, '_blank'); return false;
         }
 
-        function mostrarToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.className = "show"; setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000); }
+        function mostrarToast(m) { 
+            const t = document.getElementById("toast"); 
+            t.innerText = m; 
+            t.className = "show"; 
+            setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000); 
+        }
 
         window.onload = async function() {
             aplicarIdioma(); 
             marcarPushActivoSiExiste(); 
             setTimeout(ocultarSplash, 4000); 
             await obtenerTasaElToque(); await cargarConfigPedido();
-            try { const { data } = await supabaseClient.from('ajustes').select('mantenimiento').eq('id', 1).single(); if (data && data.mantenimiento === true) { document.getElementById('pantalla-mantenimiento').classList.remove('hidden'); ocultarSplash(); } else cargarInventario(); } catch (e) { cargarInventario(); }
+            try { 
+                const { data } = await supabaseClient.from('ajustes').select('mantenimiento').eq('id', 1).single(); 
+                if (data && data.mantenimiento === true) { 
+                    document.getElementById('pantalla-mantenimiento').classList.remove('hidden'); 
+                    ocultarSplash(); 
+                } else cargarInventario(); 
+            } catch (e) { cargarInventario(); }
         };
 
-        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/LaMia/sw.js').catch(err => console.log('SW err:', err)); }); }
-
-        function mostrarToast(m) { 
-            const t = document.getElementById("toast"); 
-            t.innerText = m; 
-            t.className = "show"; 
-            setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000); 
+        if ('serviceWorker' in navigator) { 
+            window.addEventListener('load', () => { 
+                navigator.serviceWorker.register('/LaMia/sw.js').catch(err => console.log('SW err:', err)); 
+            }); 
         }
 
         // ===== SISTEMA DE RESERVAS (PRE-ORDERS) =====
@@ -592,7 +590,7 @@ function renderizarProductos() {
             const totalEl = document.getElementById('reserva-total');
             
             if (reservaCarrito.length === 0) {
-                cont.innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Tu reserva estᡶac</p>';
+                cont.innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Tu reserva está vacía.</p>';
                 totalEl.innerText = formatearPrecio(0);
                 return;
             }
@@ -626,8 +624,8 @@ function renderizarProductos() {
         async function enviarReserva() {
             const nombre = document.getElementById('reserva-nombre').value.trim();
             const telefono = document.getElementById('reserva-telefono').value.trim();
-            if (reservaCarrito.length === 0) return mostrarToast("Tu reserva estᡶac");
-            if (!nombre || !telefono) return mostrarToast("Por favor, ingresa tu nombre y telꧯno.");
+            if (reservaCarrito.length === 0) return mostrarToast("Tu reserva está vacía.");
+            if (!nombre || !telefono) return mostrarToast("Por favor, ingresa tu nombre y teléfono.");
 
             let total = reservaCarrito.reduce((a, i) => a + (i.precio * i.cantidad), 0);
             let montoAbonado = Math.ceil(total / 2);
@@ -649,16 +647,16 @@ function renderizarProductos() {
             const { error } = await supabaseClient.from('reservas').insert([nuevaReserva]);
             if (error) return mostrarToast("Error al enviar la reserva. Intenta de nuevo.");
 
-            let m = `ola! ?? Quiero hacer una *Reserva Anticipada* en La Mia:\n\n`;
-            m += `*Cliente:* ${nombre}\n*Telꧯno:* ${telefono}\n\n*Productos:*\n`;
+            let m = `¡Hola! 📦 Quiero hacer una *Reserva Anticipada* en La Mia:\n\n`;
+            m += `*Cliente:* ${nombre}\n*Teléfono:* ${telefono}\n\n*Productos:*\n`;
             reservaCarrito.forEach(i => {
-                m += `?? ${i.cantidad}x ${i.nombre}`;
+                m += `▪️ ${i.cantidad}x ${i.nombre}`;
                 if (i.descripcion) m += `\n   (${i.descripcion})`;
                 m += `\n   Subtotal: ${formatearPrecio(i.precio * i.cantidad)}\n`;
             });
             m += `\n*Total Estimado:* ${formatearPrecio(total)}`;
             m += `\n*Abono anticipado (50%):* ${formatearPrecio(montoAbonado)}`;
-            m += `\n\nࠃoordinamos la entrega y el pago? ??`;
+            m += `\n\n¿Coordinamos la entrega y el pago? 🚚`;
 
             let url = canalPedido === 'telegram' && telegramUser ? `https://t.me/${telegramUser}?text=${encodeURIComponent(m)}` : `https://wa.me/5352164100?text=${encodeURIComponent(m)}`;
             window.open(url, '_blank');
@@ -668,9 +666,8 @@ function renderizarProductos() {
             document.getElementById('reserva-telefono').value = '';
             renderizarCarritoReserva();
             cerrarModalReserva();
-            mostrarToast("? Reserva enviada por WhatsApp!");
+            mostrarToast("✅ Reserva enviada por WhatsApp!");
         }
-    </script>
     </script>
 </body>
 </html>
