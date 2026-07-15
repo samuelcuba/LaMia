@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- Tipografía Moderna -->
+    <!-- TipografModerna -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -61,7 +61,7 @@
     <div id="pantalla-mantenimiento" class="hidden fixed inset-0 bg-gray-900 text-white z-[100] flex flex-col items-center justify-center p-6 text-center">
         <div class="text-7xl mb-6 animate-bounce">???</div>
         <h1 class="text-4xl font-extrabold text-yellow-500 mb-4" data-i18n="mant_titulo">Mantenimiento Programado</h1>
-        <p class="text-xl text-gray-300 max-w-md mb-6" data-i18n-mant-texto>Estamos actualizando nuestro inventario para ofrecerte los mejores productos. ¡Volveremos pronto!</p>
+        <p class="text-xl text-gray-300 max-w-md mb-6" data-i18n-mant-texto>Estamos actualizando nuestro inventario para ofrecerte los mejores productos. olveremos pronto!</p>
         <p class="text-gray-500">La Mia &#x1F1E8;&#x1F1FA;</p>
     </div>
 
@@ -95,35 +95,35 @@
         </div>
     </section>
 
-    <!-- BUSCADOR Y CATEGORÍAS -->
+    <!-- BUSCADOR Y CATEGOR΁S -->
     <div class="container mx-auto px-4 py-8 flex flex-col gap-4">
         <div class="relative w-full sm:max-w-md mx-auto">
             <input type="text" id="input-buscar" data-i18n-ph="buscar" placeholder="Buscar producto por nombre..." class="w-full p-4 pl-12 rounded-2xl border-2 border-gray-200 focus:border-red-500 focus:ring-4 focus:ring-red-100 outline-none text-gray-700 shadow-sm transition font-medium">
             <svg class="absolute left-4 top-4 w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
         </div>
-        <!-- Categorías Principales -->
+        <!-- Categor Principales -->
         <div class="flex flex-wrap justify-center gap-2 sm:gap-3" id="categorias-container"></div>
-        <!-- Subcategorías (Aparecen al elegir una categoría) -->
+        <!-- Subcategor (Aparecen al elegir una categor -->
         <div class="flex flex-wrap justify-center gap-2 sm:gap-3" id="subcategorias-container"></div>
     </div>
 
     <!-- CONTENEDOR DE PRODUCTOS -->
     <main class="container mx-auto px-4 pb-24 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="productos-container"></main>
 
-    <!-- BARRA DE CUPÓN -->
+    <!-- BARRA DE CUPԎ -->
     <div id="cupon-bar" class="hidden fixed bottom-24 right-6 bg-white p-2 rounded-lg shadow-lg z-50 flex items-center gap-2 border-2 border-purple-500">
-        <input type="text" id="input-cupon" data-i18n-ph="cupon_ph" placeholder="Código cupón" class="p-1 text-sm border rounded w-28 focus:outline-none">
+        <input type="text" id="input-cupon" data-i18n-ph="cupon_ph" placeholder="C󤩧o cup󮢠class="p-1 text-sm border rounded w-28 focus:outline-none">
         <button onclick="aplicarCupon()" class="bg-purple-600 text-white px-2 py-1 text-sm rounded font-bold">OK</button>
     </div>
 
-    <!-- BOTÓN FLOTANTE WHATSAPP -->
+    <!-- BOTԎ FLOTANTE WHATSAPP -->
     <a href="#" id="whatsapp-btn" onclick="return finalizarPedido(event)" class="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 z-50 flex items-center transition transform hover:scale-110">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
             <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.493.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.929 4.664c-.004 3.626-2.962 6.584-6.59 6.584zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.629.775-.114.133-.232.148-.43.05-.197-.099-.836-.308-1.592-.985-.59-.523-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.132.065-.246.033-.346-.033-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.837.328 1.122.421.473.151.904.129 1.246.08.38-.058 1.171-.479 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
         </svg>
     </a>
 
-        <!-- BOTÓN FLOTANTE PARA RESERVAR -->
+        <!-- BOTԎ FLOTANTE PARA RESERVAR -->
     <button onclick="abrirModalReserva()" class="fixed bottom-6 left-6 bg-purple-600 text-white p-4 rounded-full shadow-lg hover:bg-purple-700 z-50 flex items-center transition transform hover:scale-110" title="Hacer una reserva">
         <span class="text-2xl">??</span>
         <span class="hidden sm:inline ml-2 font-bold text-sm">Reservar</span>
@@ -138,10 +138,10 @@
             </div>
             
             <div class="p-4 overflow-y-auto flex-grow">
-                <p class="text-sm text-gray-600 mb-4 bg-purple-50 text-purple-700 p-2 rounded-lg text-center">Busca lo que necesitas en nuestro catálogo de proveedor. Se abona el <b>50% por adelantado</b> y se coordina la recogida.</p>
+                <p class="text-sm text-gray-600 mb-4 bg-purple-50 text-purple-700 p-2 rounded-lg text-center">Busca lo que necesitas en nuestro cat⭯go de proveedor. Se abona el <b>50% por adelantado</b> y se coordina la recogida.</p>
                 
                 <!-- Buscador -->
-                <input type="text" id="buscar-reserva" placeholder="?? Ej: 165/70R12 o Neumático..." class="w-full p-3 mb-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 outline-none text-gray-700 font-medium" oninput="buscarProveedor()">
+                <input type="text" id="buscar-reserva" placeholder="?? Ej: 165/70R12 o Neum⵩co..." class="w-full p-3 mb-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 outline-none text-gray-700 font-medium" oninput="buscarProveedor()">
                 
                 <!-- Resultados -->
                 <div id="resultados-proveedor" class="mb-4 max-h-40 overflow-y-auto border rounded-xl p-2 bg-gray-50">
@@ -152,14 +152,14 @@
                 <div class="bg-purple-50 border border-purple-200 rounded-xl p-3 mb-4 min-h-[80px]">
                     <h3 class="font-bold text-purple-800 mb-2 text-sm">Tu Lista de Reserva:</h3>
                     <div id="carrito-reserva" class="text-sm">
-                        <p class="text-center text-gray-400 text-sm">Tu reserva está vacía.</p>
+                        <p class="text-center text-gray-400 text-sm">Tu reserva estᡶac</p>
                     </div>
                 </div>
 
                 <!-- Datos del Cliente -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
                     <input type="text" id="reserva-nombre" placeholder="Tu nombre completo" class="p-2 rounded-lg border-2 border-gray-200 focus:border-purple-500 outline-none text-gray-700 text-sm">
-                    <input type="text" id="reserva-telefono" placeholder="Tu teléfono" class="p-2 rounded-lg border-2 border-gray-200 focus:border-purple-500 outline-none text-gray-700 text-sm">
+                    <input type="text" id="reserva-telefono" placeholder="Tu telꧯno" class="p-2 rounded-lg border-2 border-gray-200 focus:border-purple-500 outline-none text-gray-700 text-sm">
                 </div>
             </div>
 
@@ -202,22 +202,22 @@
                 disponibles: "Disponibles:",
                 agotado: "Agotado",
                 agregar: "Agregar",
-                cupon_ph: "Código cupón",
+                cupon_ph: "C󤩧o cup󮢬
                 toast_agregado: "agregado!",
                 toast_carrito_vaciado: "Carrito vaciado ???",
-                toast_cupon_invalido: "Cupón inválido ?",
-                toast_pedido_enviado: "¡Pedido enviado! ??",
-                toast_cupon_aplicado: "Cupón aplicado",
-                wa_saludo: "¡Hola! ?? Quiero hacer el siguiente pedido en La Mia:",
+                toast_cupon_invalido: "Cup󮠩nv⭩do ?",
+                toast_pedido_enviado: "edido enviado! ??",
+                toast_cupon_aplicado: "Cup󮠡plicado",
+                wa_saludo: "ola! ?? Quiero hacer el siguiente pedido en La Mia:",
                 wa_descuento: "Descuento",
                 wa_total: "Total a pagar",
-                wa_coordinar: "¿Coordinamos la entrega? ??",
+                wa_coordinar: "ࠃoordinamos la entrega? ??",
                 mant_titulo: "Mantenimiento Programado",
-                mant_texto: "Estamos actualizando nuestro inventario para ofrecerte los mejores productos. ¡Volveremos pronto!",
+                mant_texto: "Estamos actualizando nuestro inventario para ofrecerte los mejores productos. olveremos pronto!",
                 btn_idioma_otro: "????",
                 push_activar: "Activar notificaciones",
                 push_activado: "Notificaciones activadas ?",
-                push_denegado: "Permisos denegados. Actívalos en el navegador.",
+                push_denegado: "Permisos denegados. Actlos en el navegador.",
                 push_no_soportado: "Tu navegador no soporta notificaciones push.",
                 push_error: "Error al activar notificaciones."
             },
@@ -355,7 +355,7 @@ function renderizarCategorias() {
     const c = [t('cat_todos'), ...new Set(inventario.map(p => p.categoria))]; 
     const ct = document.getElementById('categorias-container'); 
     ct.innerHTML = ''; 
-    // Limpiamos subcategorías al cambiar la principal
+    // Limpiamos subcategor al cambiar la principal
     document.getElementById('subcategorias-container').innerHTML = '';
     c.forEach((cat, idx) => { 
         const activa = (idx === 0 && categoriaActual === null) || cat === categoriaActual; 
@@ -363,12 +363,12 @@ function renderizarCategorias() {
     }); 
 }
 
-// NUEVA FUNCIÓN
+// NUEVA FUNCIԎ
 function renderizarSubcategorias() {
     const st = document.getElementById('subcategorias-container');
-    if (!categoriaActual) { st.innerHTML = ''; return; } // Si es "Todos", no hay subcategorías
+    if (!categoriaActual) { st.innerHTML = ''; return; } // Si es "Todos", no hay subcategor
     
-    // Obtnemos subcategorías únicas de los productos de esa categoría
+    // Obtnemos subcategor 򮩣as de los productos de esa categor
     const subs = [...new Set(inventario.filter(p => p.categoria === categoriaActual && p.subcategoria).map(p => p.subcategoria))];
     if (subs.length === 0) { st.innerHTML = ''; return; }
     
@@ -380,7 +380,7 @@ function renderizarSubcategorias() {
     st.innerHTML = html;
 }
 
-// NUEVA FUNCIÓN
+// NUEVA FUNCIԎ
 function filtrarSubcategoria(s) {
     subcategoriaActual = s;
     renderizarSubcategorias();
@@ -389,7 +389,7 @@ function filtrarSubcategoria(s) {
         
 function filtrarCategoria(c) { 
     categoriaActual = c; 
-    subcategoriaActual = null; // Reseteamos subcategoría
+    subcategoriaActual = null; // Reseteamos subcategor
     renderizarCategorias(); 
     renderizarSubcategorias();
     renderizarProductos(); 
@@ -399,7 +399,7 @@ function renderizarProductos() {
     const c = document.getElementById('productos-container'); 
     let pM = categoriaActual === null ? inventario : inventario.filter(p => p.categoria === categoriaActual); 
     
-    // FILTRO NUEVO DE SUBCATEGORÍA
+    // FILTRO NUEVO DE SUBCATEGOR΁
     if (subcategoriaActual !== null) {
         pM = pM.filter(p => p.subcategoria === subcategoriaActual);
     }
@@ -412,7 +412,7 @@ function renderizarProductos() {
     let h = ''; 
     pM.forEach(p => { 
         const s = p.existencia !== undefined ? p.existencia : 99, sS = s <= 0; 
-        // Mostramos la subcategoría en la tarjeta si existe
+        // Mostramos la subcategoren la tarjeta si existe
         const etiqueta = p.subcategoria ? `${p.categoria} - ${p.subcategoria}` : p.categoria;
         
         h += `
@@ -505,7 +505,7 @@ function renderizarProductos() {
 
         if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/LaMia/sw.js').catch(err => console.log('SW err:', err)); }); }
 
-                function mostrarToast(m) { 
+        function mostrarToast(m) { 
             const t = document.getElementById("toast"); 
             t.innerText = m; 
             t.className = "show"; 
@@ -592,7 +592,7 @@ function renderizarProductos() {
             const totalEl = document.getElementById('reserva-total');
             
             if (reservaCarrito.length === 0) {
-                cont.innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Tu reserva está vacía.</p>';
+                cont.innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Tu reserva estᡶac</p>';
                 totalEl.innerText = formatearPrecio(0);
                 return;
             }
@@ -626,8 +626,8 @@ function renderizarProductos() {
         async function enviarReserva() {
             const nombre = document.getElementById('reserva-nombre').value.trim();
             const telefono = document.getElementById('reserva-telefono').value.trim();
-            if (reservaCarrito.length === 0) return mostrarToast("Tu reserva está vacía.");
-            if (!nombre || !telefono) return mostrarToast("Por favor, ingresa tu nombre y teléfono.");
+            if (reservaCarrito.length === 0) return mostrarToast("Tu reserva estᡶac");
+            if (!nombre || !telefono) return mostrarToast("Por favor, ingresa tu nombre y telꧯno.");
 
             let total = reservaCarrito.reduce((a, i) => a + (i.precio * i.cantidad), 0);
             let montoAbonado = Math.ceil(total / 2);
@@ -649,8 +649,8 @@ function renderizarProductos() {
             const { error } = await supabaseClient.from('reservas').insert([nuevaReserva]);
             if (error) return mostrarToast("Error al enviar la reserva. Intenta de nuevo.");
 
-            let m = `¡Hola! ?? Quiero hacer una *Reserva Anticipada* en La Mia:\n\n`;
-            m += `*Cliente:* ${nombre}\n*Teléfono:* ${telefono}\n\n*Productos:*\n`;
+            let m = `ola! ?? Quiero hacer una *Reserva Anticipada* en La Mia:\n\n`;
+            m += `*Cliente:* ${nombre}\n*Telꧯno:* ${telefono}\n\n*Productos:*\n`;
             reservaCarrito.forEach(i => {
                 m += `?? ${i.cantidad}x ${i.nombre}`;
                 if (i.descripcion) m += `\n   (${i.descripcion})`;
@@ -658,7 +658,7 @@ function renderizarProductos() {
             });
             m += `\n*Total Estimado:* ${formatearPrecio(total)}`;
             m += `\n*Abono anticipado (50%):* ${formatearPrecio(montoAbonado)}`;
-            m += `\n\n¿Coordinamos la entrega y el pago? ??`;
+            m += `\n\nࠃoordinamos la entrega y el pago? ??`;
 
             let url = canalPedido === 'telegram' && telegramUser ? `https://t.me/${telegramUser}?text=${encodeURIComponent(m)}` : `https://wa.me/5352164100?text=${encodeURIComponent(m)}`;
             window.open(url, '_blank');
