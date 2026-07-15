@@ -516,6 +516,17 @@ async function abrirModalReserva() {
     if (catalogoProveedor.length === 0) {
         const { data, error } = await supabaseClient.from('catalogo_proveedor').select('*');
         if (!error) catalogoProveedor = data;
+    }// ===== SISTEMA DE RESERVAS (PRE-ORDERS) =====
+let catalogoProveedor = [];
+let reservaCarrito = [];
+let timeoutBuscarProv = null;
+
+async function abrirModalReserva() {
+    document.getElementById('modal-reserva').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    if (catalogoProveedor.length === 0) {
+        const { data, error } = await supabaseClient.from('catalogo_proveedor').select('*');
+        if (!error) catalogoProveedor = data;
     }
     document.getElementById('buscar-reserva').value = '';
     document.getElementById('resultados-proveedor').innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Escribe para buscar...</p>';
@@ -523,7 +534,7 @@ async function abrirModalReserva() {
 
 function cerrarModalReserva() {
     document.getElementById('modal-reserva').classList.add('hidden');
-    document.body.style.overflow = 'auto'; // Restaura scroll
+    document.body.style.overflow = 'auto';
 }
 
 function buscarProveedor() {
@@ -551,12 +562,6 @@ function buscarProveedor() {
     }, 300);
 }
 
-nviarReserva, y reemplázalas por estas:
-javascript
- 
-  
- 
- 
 function agregarAReserva(id) {
     const p = catalogoProveedor.find(x => x.id === id);
     if (!p) return;
@@ -564,14 +569,7 @@ function agregarAReserva(id) {
     if (enCarrito) {
         enCarrito.cantidad += 1;
     } else {
-        // Guardamos también la descripción
-        reservaCarrito.push({ 
-            id: p.id, 
-            nombre: p.nombre, 
-            descripcion: p.descripcion || '', 
-            precio: p.precio_estimado, 
-            cantidad: 1 
-        });
+        reservaCarrito.push({ id: p.id, nombre: p.nombre, descripcion: p.descripcion || '', precio: p.precio_estimado, cantidad: 1 });
     }
     document.getElementById('buscar-reserva').value = '';
     document.getElementById('resultados-proveedor').innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Escribe para buscar...</p>';
@@ -636,9 +634,8 @@ async function enviarReserva() {
     if (!nombre || !telefono) return mostrarToast("Por favor, ingresa tu nombre y teléfono.");
 
     let total = reservaCarrito.reduce((a, i) => a + (i.precio * i.cantidad), 0);
-    let montoAbonado = Math.ceil(total / 2); // Calcula el 50%
+    let montoAbonado = Math.ceil(total / 2);
 
-    // 1. Guardar en Supabase (incluyendo la descripción en el JSON)
     const nuevaReserva = {
         cliente_nombre: nombre,
         cliente_telefono: telefono,
@@ -656,12 +653,11 @@ async function enviarReserva() {
     const { error } = await supabaseClient.from('reservas').insert([nuevaReserva]);
     if (error) return mostrarToast("Error al enviar la reserva. Intenta de nuevo.");
 
-    // 2. Enviar por WhatsApp con todos los detalles
     let m = `¡Hola! 📦 Quiero hacer una *Reserva Anticipada* en La Mia:\n\n`;
     m += `*Cliente:* ${nombre}\n*Teléfono:* ${telefono}\n\n*Productos:*\n`;
     reservaCarrito.forEach(i => {
         m += `▪️ ${i.cantidad}x ${i.nombre}`;
-        if (i.descripcion) m += `\n   (${i.descripcion})`; // Agrega los detalles
+        if (i.descripcion) m += `\n   (${i.descripcion})`;
         m += `\n   Subtotal: ${formatearPrecio(i.precio * i.cantidad)}\n`;
     });
     m += `\n*Total Estimado:* ${formatearPrecio(total)}`;
@@ -671,15 +667,13 @@ async function enviarReserva() {
     let url = canalPedido === 'telegram' && telegramUser ? `https://t.me/${telegramUser}?text=${encodeURIComponent(m)}` : `https://wa.me/5352164100?text=${encodeURIComponent(m)}`;
     window.open(url, '_blank');
 
-    // 3. Limpiar y cerrar
     reservaCarrito = [];
     document.getElementById('reserva-nombre').value = '';
     document.getElementById('reserva-telefono').value = '';
     renderizarCarritoReserva();
     cerrarModalReserva();
     mostrarToast("✅ Reserva enviada por WhatsApp!");
-}
-        
+}        
     </script>
 </body>
 </html>
