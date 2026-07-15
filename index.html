@@ -551,6 +551,12 @@ function buscarProveedor() {
     }, 300);
 }
 
+nviarReserva, y reemplázalas por estas:
+javascript
+ 
+  
+ 
+ 
 function agregarAReserva(id) {
     const p = catalogoProveedor.find(x => x.id === id);
     if (!p) return;
@@ -558,7 +564,14 @@ function agregarAReserva(id) {
     if (enCarrito) {
         enCarrito.cantidad += 1;
     } else {
-        reservaCarrito.push({ id: p.id, nombre: p.nombre, precio: p.precio_estimado, cantidad: 1 });
+        // Guardamos también la descripción
+        reservaCarrito.push({ 
+            id: p.id, 
+            nombre: p.nombre, 
+            descripcion: p.descripcion || '', 
+            precio: p.precio_estimado, 
+            cantidad: 1 
+        });
     }
     document.getElementById('buscar-reserva').value = '';
     document.getElementById('resultados-proveedor').innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Escribe para buscar...</p>';
@@ -597,7 +610,8 @@ function renderizarCarritoReserva() {
         return `
             <div class="flex justify-between items-center text-sm py-1 border-b last:border-0 border-purple-100">
                 <div class="flex-1 pr-2">
-                    <p class="font-medium text-gray-700">${i.nombre}</p>
+                    <p class="font-medium text-gray-800">${i.nombre}</p>
+                    ${i.descripcion ? `<p class="text-xs text-gray-500 mt-0.5">${i.descripcion}</p>` : ''}
                     <div class="flex items-center gap-2 mt-1">
                         <button onclick="cambiarCantReserva(${i.id}, -1)" class="bg-gray-200 w-6 h-6 rounded text-xs font-bold hover:bg-gray-300">-</button>
                         <span class="font-bold text-gray-700">${i.cantidad}</span>
@@ -624,11 +638,16 @@ async function enviarReserva() {
     let total = reservaCarrito.reduce((a, i) => a + (i.precio * i.cantidad), 0);
     let montoAbonado = Math.ceil(total / 2); // Calcula el 50%
 
-    // 1. Guardar en Supabase
+    // 1. Guardar en Supabase (incluyendo la descripción en el JSON)
     const nuevaReserva = {
         cliente_nombre: nombre,
         cliente_telefono: telefono,
-        productos: JSON.stringify(reservaCarrito.map(i => ({ nombre: i.nombre, cantidad: i.cantidad, precio: i.precio }))),
+        productos: JSON.stringify(reservaCarrito.map(i => ({ 
+            nombre: i.nombre, 
+            cantidad: i.cantidad, 
+            precio: i.precio,
+            descripcion: i.descripcion 
+        }))),
         total_estimado: total,
         monto_abonado: montoAbonado,
         estado: 'pendiente'
@@ -637,11 +656,13 @@ async function enviarReserva() {
     const { error } = await supabaseClient.from('reservas').insert([nuevaReserva]);
     if (error) return mostrarToast("Error al enviar la reserva. Intenta de nuevo.");
 
-    // 2. Enviar por WhatsApp
+    // 2. Enviar por WhatsApp con todos los detalles
     let m = `¡Hola! 📦 Quiero hacer una *Reserva Anticipada* en La Mia:\n\n`;
     m += `*Cliente:* ${nombre}\n*Teléfono:* ${telefono}\n\n*Productos:*\n`;
     reservaCarrito.forEach(i => {
-        m += `- ${i.cantidad}x ${i.nombre} (${formatearPrecio(i.precio * i.cantidad)})\n`;
+        m += `▪️ ${i.cantidad}x ${i.nombre}`;
+        if (i.descripcion) m += `\n   (${i.descripcion})`; // Agrega los detalles
+        m += `\n   Subtotal: ${formatearPrecio(i.precio * i.cantidad)}\n`;
     });
     m += `\n*Total Estimado:* ${formatearPrecio(total)}`;
     m += `\n*Abono anticipado (50%):* ${formatearPrecio(montoAbonado)}`;
