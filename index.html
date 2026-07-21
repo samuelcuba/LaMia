@@ -713,6 +713,23 @@ async function enviarReserva() {
     cerrarModalReserva();
     mostrarToast(t('toast_reserva_enviada'));
 }    
+
+function quitarDeReserva(id) {
+    reservaCarrito = reservaCarrito.filter(i => i.id !== id);
+    renderizarCarritoReserva();
+}
+
+function cambiarCantReserva(id, delta) {
+    const item = reservaCarrito.find(i => i.id === id);
+    if (!item) return;
+    item.cantidad += delta;
+    if (item.cantidad <= 0) {
+        // Si la cantidad llega a 0, quitamos el producto del carrito
+        reservaCarrito = reservaCarrito.filter(i => i.id !== id);
+    }
+    renderizarCarritoReserva();
+}
+        
 </script>
 </body>
 </html>
