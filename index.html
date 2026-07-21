@@ -473,31 +473,29 @@
         }
 
         document.getElementById('input-buscar').addEventListener('input', function(e) { clearTimeout(timeoutBusqueda); timeoutBusqueda = setTimeout(() => { textoBusqueda = e.target.value; renderizarProductos(); }, 250); });
-
-        async function agregarCarrito(id) { 
-            const p = inventario.find(x => x.id === id); 
-            if (p.existencia <= 0) return; 
-            const { error } = await supabaseClient.rpc('decrement_stock', { p_id: id, p_qty: 1 }); 
-            if (error) return; 
-            p.existencia -= 1; 
-            const e = carrito.find(i => i.id === id); 
-            if (e) e.cantidad += 1; 
-            else carrito.push({ id: p.id, nombre: p.nombre, venta: p.venta, cantidad: 1 }); 
-            actualizarUI(); renderizarProductos(); mostrarToast(`${p.nombre} ${t('toast_agregado')}`); 
-        }
         
-        async function vaciarCarrito() { 
-            if (carrito.length === 0) return; 
-            for (const i of carrito) { 
-                await supabaseClient.rpc('increment_stock', { p_id: i.id, p_qty: i.cantidad }); 
-                const p = inventario.find(x => x.id === i.id); 
-                if (p) p.existencia += i.cantidad; 
-            } 
-            carrito = []; cuponAplicado = null; descuento = 0; 
-            document.getElementById('input-cupon').value = ''; 
-            localStorage.removeItem('carritoLaMia'); 
-            actualizarUI(); renderizarProductos(); mostrarToast(t('toast_carrito_vaciado')); 
-        }
+function agregarCarrito(id) { 
+    const p = inventario.find(x => x.id === id); 
+    if (p.existencia <= 0) return; 
+    // Ya no descontamos aquí. Solo lo agregamos al carrito local.
+    const e = carrito.find(i => i.id === id); 
+    if (e) e.cantidad += 1; 
+    else carrito.push({ id: p.id, nombre: p.nombre, venta: p.venta, cantidad: 1 }); 
+    actualizarUI(); renderizarProductos(); mostrarToast(`${p.nombre} ${t('toast_agregado')}`); 
+}
+        
+function vaciarCarrito() { 
+    if (carrito.length === 0) return; 
+    // Solo vaciamos el carrito visualmente
+    carrito = []; 
+    cuponAplicado = null; 
+    descuento = 0; 
+    document.getElementById('input-cupon').value = ''; 
+    localStorage.removeItem('carritoLaMia'); 
+    actualizarUI(); 
+    renderizarProductos(); 
+    mostrarToast(t('toast_carrito_vaciado')); 
+}
 
         // --- CUPONES ---
         async function aplicarCupon() {
@@ -520,15 +518,57 @@
             m += `%0A*${t('wa_total')}:* ${monedaActual === 'USD' ? `$${Math.ceil(tF / TASA_USD)} USD` : `${tF} CUP`}%0A%0A${t('wa_coordinar')}`;
             b.href = canalPedido === 'telegram' && telegramUser ? `https://t.me/${telegramUser}?text=${m}` : `https://wa.me/5352164100?text=${m}`;
         }
-
-        async function finalizarPedido(e) {
-            if (e) e.preventDefault(); if (carrito.length === 0) return false; const lW = document.getElementById('whatsapp-btn').href;
-            try {
-                const vD = carrito.map(i => { const p = inventario.find(x => x.id === i.id); const c = p ? (p.costo || 0) : 0; let tV = i.venta * i.cantidad; if (cuponAplicado && descuento > 0) tV = tV - Math.ceil(tV * (descuento / 100)); return { producto: i.nombre, cantidad: i.cantidad, precio_venta: i.venta, costo: c, total_venta: tV, ganancia: tV - (c * i.cantidad), moneda: monedaActual }; });
-                const { error } = await supabaseClient.from('ventas').insert(vD); if (error) throw error;
-            } catch (e) { alert("Error al guardar venta."); return false; }
-            carrito = []; cuponAplicado = null; descuento = 0; document.getElementById('input-cupon').value = ''; localStorage.removeItem('carritoLaMia'); actualizarUI(); mostrarToast(t('toast_pedido_enviado')); window.open(lW, '_blank'); return false;
+        
+async function finalizarPedido(e) {
+    if (e) e.preventDefault();
+    if (carrito.length === 0) return false;
+    
+    // 1. Verificar que haya stock suficiente antes de procesar
+    for (const i of carrito) {
+        const p = inventario.find(x => x.id === i.id);
+        if (!p || p.existencia < i.cantidad) {
+            alert("Lo sentimos, uno de los productos en tu carrito se acaba de agotar.");
+            vaciarCarrito();
+            return false;
         }
+    }
+
+    const lW = document.getElementById('whatsapp-btn').href;
+    try {
+        // 2. Descontar el stock real en Supabase AHORA
+        for (const i of carrito) {
+            await supabaseClient.rpc('decrement_stock', { p_id: i.id, p_qty: i.cantidad });
+            const p = inventario.find(x => x.id === i.id);
+            if (p) p.existencia -= i.cantidad;
+        }
+
+        // 3. Guardar la venta en la base de datos
+        const vD = carrito.map(i => { 
+            const p = inventario.find(x => x.id === i.id); 
+            const c = p ? (p.costo || 0) : 0; 
+            let tV = i.venta * i.cantidad; 
+            if (cuponAplicado && descuento > 0) tV = tV - Math.ceil(tV * (descuento / 100)); 
+            return { producto: i.nombre, cantidad: i.cantidad, precio_venta: i.venta, costo: c, total_venta: tV, ganancia: tV - (c * i.cantidad), moneda: monedaActual }; 
+        });
+        const { error } = await supabaseClient.from('ventas').insert(vD); 
+        if (error) throw error;
+    } catch (err) { 
+        alert("Hubo un error al procesar tu pedido. Intenta de nuevo."); 
+        return false; 
+    }
+    
+    // 4. Limpiar carrito y abrir WhatsApp
+    carrito = []; 
+    cuponAplicado = null; 
+    descuento = 0; 
+    document.getElementById('input-cupon').value = ''; 
+    localStorage.removeItem('carritoLaMia'); 
+    actualizarUI(); 
+    mostrarToast(t('toast_pedido_enviado')); 
+    renderizarProductos();
+    window.open(lW, '_blank'); 
+    return false;
+}
 
         function mostrarToast(m) { 
             const t = document.getElementById("toast"); 
