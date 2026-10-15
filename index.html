@@ -74,10 +74,6 @@
             <div class="flex items-center gap-2 sm:gap-3">
                 <button onclick="cambiarIdioma()" id="btn-idioma" class="bg-white/20 hover:bg-white/40 text-white font-bold p-2 rounded-full text-lg transition" title="Cambiar idioma">🇨🇺</button>
                 <button onclick="activarPush()" id="btn-push" class="bg-white/20 hover:bg-white/40 text-white font-bold p-2 rounded-full text-lg transition" title="Notificaciones">🔔</button>
-                <div class="bg-white/20 p-1 rounded-full text-xs flex">
-                    <button onclick="cambiarMoneda('CUP')" id="btn-cup" class="px-3 py-1 bg-white text-red-600 rounded-full font-bold transition">CUP</button>
-                    <button onclick="cambiarMoneda('USD')" id="btn-usd" class="px-3 py-1 text-white font-bold transition">USD</button>
-                </div>
                 <div class="bg-white text-red-600 font-bold py-2 px-4 rounded-full text-sm flex items-center gap-2 shadow-md">
                     <span>🛒 <span id="cart-count">0</span></span>
                     <button onclick="vaciarCarrito()" class="text-red-400 hover:text-red-700 font-bold text-lg leading-none ml-1" title="Vaciar carrito">&times;</button>
@@ -91,7 +87,7 @@
         <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
         <div class="container mx-auto px-4 relative z-10">
             <h2 class="text-3xl md:text-5xl font-extrabold mb-3 drop-shadow-md" data-i18n="hero_titulo">Todo lo que buscas, en un solo lugar</h2>
-            <p class="text-base md:text-lg font-medium max-w-2xl mx-auto bg-black/20 inline-block px-4 py-2 rounded-full" data-i18n-hero-sub>Pagos en efectivo (CUP) 🇨🇺 | Entrega a domicilio o punto de encuentro</p>
+            <p class="text-base md:text-lg font-medium max-w-2xl mx-auto bg-black/20 inline-block px-4 py-2 rounded-full" data-i18n-hero-sub>Precios en USD 💵 | ¿Pagar en MN (CUP)? Escríbenos por WhatsApp 🇨🇺</p>
         </div>
     </section>
 
@@ -187,7 +183,7 @@
 
         const VAPID_PUBLIC_KEY = 'BB3So7Bz4lW7xnUVshfZ3A1lu2-OjqApbPfgUuVDMu-mEiWhaGvEIlDSz77BBZYERuv8OBDZdNCvGsD7-ogp3l0';
 
-        let inventario = [], carrito = [], categoriaActual = null, subcategoriaActual = null, monedaActual = "CUP", textoBusqueda = "", TASA_USD = 660, timeoutBusqueda = null;
+        let inventario = [], carrito = [], categoriaActual = null, subcategoriaActual = null, monedaActual = "USD", textoBusqueda = "", TASA_USD = 660, timeoutBusqueda = null;
         let canalPedido = 'whatsapp', telegramUser = '';
         let cuponAplicado = null, descuento = 0; 
         let splashYaOculto = false;
@@ -198,7 +194,7 @@
             es: {
                 titulo: "La Mia - Tu Tienda Online",
                 hero_titulo: "Todo lo que buscas, en un solo lugar",
-                hero_sub: "Pagos en efectivo (CUP) 🇨🇺 | Entrega a domicilio o punto de encuentro",
+                hero_sub: "Precios en USD 💵 | ¿Pagar en MN (CUP)? Escríbenos por WhatsApp 🇨🇺",
                 buscar: "🔎 Buscar producto por nombre...",
                 cat_todos: "Todos",
                 sin_resultados: "No se encontraron productos... 🤔",
@@ -214,7 +210,7 @@
                 wa_saludo: "¡Hola! 🛒 Quiero hacer el siguiente pedido en La Mia:",
                 wa_descuento: "Descuento",
                 wa_total: "Total a pagar",
-                wa_coordinar: "¿Coordinamos la entrega? 🚚",
+                wa_coordinar: "¿Coordinamos la entrega? 🚚 (Si deseas pagar en CUP/MN, avísame para aplicarte la tasa del día).",
                 mant_titulo: "Mantenimiento Programado",
                 mant_texto: "Estamos actualizando nuestro inventario para ofrecerte los mejores productos. ¡Volveremos pronto!",
                 btn_idioma_otro: "🇺🇸",
@@ -249,7 +245,7 @@
             en: {
                 titulo: "La Mia - Your Online Store",
                 hero_titulo: "Everything you need, in one place",
-                hero_sub: "Cash payments (CUP) 🇨🇺 | Home delivery or meeting point",
+                hero_sub: "Prices in USD 💵 | Want to pay in CUP? Message us on WhatsApp 🇨🇺",
                 buscar: "🔎 Search product by name...",
                 cat_todos: "All",
                 sin_resultados: "No products found... 🤔",
@@ -265,7 +261,7 @@
                 wa_saludo: "Hi! 🛒 I'd like to place this order at La Mia:",
                 wa_descuento: "Discount",
                 wa_total: "Total to pay",
-                wa_coordinar: "Can we arrange delivery? 🚚",
+                wa_coordinar: "Can we arrange delivery? 🚚 (If you want to pay in CUP, let me know to apply today's rate).",
                 mant_titulo: "Scheduled Maintenance",
                 mant_texto: "We're updating our inventory to offer you the best products. We'll be back soon!",
                 btn_idioma_otro: "🇨🇺",
@@ -366,24 +362,8 @@
 
         async function obtenerTasaElToque() { try { const { data } = await supabaseClient.from('ajustes').select('tasa_usd').eq('id', 1).single(); if (data && data.tasa_usd) TASA_USD = Math.round(data.tasa_usd); } catch (e) {} }
         async function cargarConfigPedido() { const { data } = await supabaseClient.from('ajustes').select('canal_pedido, telegram_user').eq('id', 1).single(); if (data) { canalPedido = data.canal_pedido || 'whatsapp'; telegramUser = data.telegram_user || ''; } }
-
-        function cambiarMoneda(m) { 
-            monedaActual = m; 
-            if(m === 'CUP') { 
-                document.getElementById('btn-cup').classList.add('bg-white', 'text-red-600'); 
-                document.getElementById('btn-cup').classList.remove('text-white'); 
-                document.getElementById('btn-usd').classList.remove('bg-white', 'text-red-600'); 
-                document.getElementById('btn-usd').classList.add('text-white'); 
-            } else { 
-                document.getElementById('btn-usd').classList.add('bg-white', 'text-red-600'); 
-                document.getElementById('btn-usd').classList.remove('text-white'); 
-                document.getElementById('btn-cup').classList.remove('bg-white', 'text-red-600'); 
-                document.getElementById('btn-cup').classList.add('text-white'); 
-            } 
-            renderizarProductos(); actualizarUI(); 
-        }
         
-        function formatearPrecio(p) { if (monedaActual === 'USD') return `$${Math.ceil(p / TASA_USD)} USD`; return `${p} CUP`; }
+        function formatearPrecio(p) { return `$${Math.ceil(p / TASA_USD)} USD`; }
 
         async function cargarInventario() { 
             try { 
@@ -477,7 +457,6 @@
 function agregarCarrito(id) { 
     const p = inventario.find(x => x.id === id); 
     if (p.existencia <= 0) return; 
-    // Ya no descontamos aquí. Solo lo agregamos al carrito local.
     const e = carrito.find(i => i.id === id); 
     if (e) e.cantidad += 1; 
     else carrito.push({ id: p.id, nombre: p.nombre, venta: p.venta, cantidad: 1 }); 
@@ -486,7 +465,6 @@ function agregarCarrito(id) {
         
 function vaciarCarrito() { 
     if (carrito.length === 0) return; 
-    // Solo vaciamos el carrito visualmente
     carrito = []; 
     cuponAplicado = null; 
     descuento = 0; 
@@ -508,14 +486,26 @@ function vaciarCarrito() {
         }
 
         function actualizarUI() {
-            const tI = carrito.reduce((a, i) => a + i.cantidad, 0); document.getElementById('cart-count').innerText = tI; localStorage.setItem('carritoLaMia', JSON.stringify(carrito));
-            const cB = document.getElementById('cupon-bar'); if (carrito.length > 0) cB.classList.remove('hidden'); else cB.classList.add('hidden');
-            let b = document.getElementById('whatsapp-btn'); if (carrito.length === 0) { b.href = "#"; return; }
+            const tI = carrito.reduce((a, i) => a + i.cantidad, 0); 
+            document.getElementById('cart-count').innerText = tI; 
+            localStorage.setItem('carritoLaMia', JSON.stringify(carrito));
+            const cB = document.getElementById('cupon-bar'); 
+            if (carrito.length > 0) cB.classList.remove('hidden'); else cB.classList.add('hidden');
+            let b = document.getElementById('whatsapp-btn'); 
+            if (carrito.length === 0) { b.href = "#"; return; }
             let m = t('wa_saludo') + "%0A%0A", tC = 0;
-            carrito.forEach(i => { const s = i.venta * i.cantidad; tC += s; m += `*${i.cantidad}x* ${i.nombre} - ${monedaActual === 'USD' ? `$${Math.ceil(s / TASA_USD)} USD` : `${s} CUP`}%0A`; });
+            carrito.forEach(i => { 
+                const s = i.venta * i.cantidad; 
+                tC += s; 
+                m += `*${i.cantidad}x* ${i.nombre} - $${Math.ceil(s / TASA_USD)} USD%0A`; 
+            });
             let tF = tC;
-            if (cuponAplicado && descuento > 0) { let mD = Math.ceil(tC * (descuento / 100)); tF = tC - mD; m += `%0A*${t('wa_descuento')} (${descuento}%):* -${monedaActual === 'USD' ? `$${Math.ceil(mD / TASA_USD)} USD` : `${mD} CUP`}%0A`; }
-            m += `%0A*${t('wa_total')}:* ${monedaActual === 'USD' ? `$${Math.ceil(tF / TASA_USD)} USD` : `${tF} CUP`}%0A%0A${t('wa_coordinar')}`;
+            if (cuponAplicado && descuento > 0) { 
+                let mD = Math.ceil(tC * (descuento / 100)); 
+                tF = tC - mD; 
+                m += `%0A*${t('wa_descuento')} (${descuento}%):* -$${Math.ceil(mD / TASA_USD)} USD%0A`; 
+            }
+            m += `%0A*${t('wa_total')}:* $${Math.ceil(tF / TASA_USD)} USD%0A%0A${t('wa_coordinar')}`;
             b.href = canalPedido === 'telegram' && telegramUser ? `https://t.me/${telegramUser}?text=${m}` : `https://wa.me/5352164100?text=${m}`;
         }
         
@@ -676,7 +666,7 @@ function renderizarCarritoReserva() {
     
     if (reservaCarrito.length === 0) {
         cont.innerHTML = `<p class="text-center text-gray-400 text-sm py-4">${t('reservar_carrito_vacio')}</p>`;
-        totalEl.innerText = formatearPrecio(0);
+        totalEl.innerText = `$0 USD`;
         return;
     }
 
@@ -764,7 +754,6 @@ function cambiarCantReserva(id, delta) {
     if (!item) return;
     item.cantidad += delta;
     if (item.cantidad <= 0) {
-        // Si la cantidad llega a 0, quitamos el producto del carrito
         reservaCarrito = reservaCarrito.filter(i => i.id !== id);
     }
     renderizarCarritoReserva();
