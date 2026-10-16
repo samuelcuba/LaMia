@@ -363,7 +363,8 @@
         async function obtenerTasaElToque() { try { const { data } = await supabaseClient.from('ajustes').select('tasa_usd').eq('id', 1).single(); if (data && data.tasa_usd) TASA_USD = Math.round(data.tasa_usd); } catch (e) {} }
         async function cargarConfigPedido() { const { data } = await supabaseClient.from('ajustes').select('canal_pedido, telegram_user').eq('id', 1).single(); if (data) { canalPedido = data.canal_pedido || 'whatsapp'; telegramUser = data.telegram_user || ''; } }
         
-        function formatearPrecio(p) { return `$${Math.ceil(p / TASA_USD)} USD`; }
+        // Mostrar el precio exactamente como está en la base de datos
+        function formatearPrecio(p) { return `$${p} USD`; }
 
         async function cargarInventario() { 
             try { 
@@ -497,15 +498,15 @@ function vaciarCarrito() {
             carrito.forEach(i => { 
                 const s = i.venta * i.cantidad; 
                 tC += s; 
-                m += `*${i.cantidad}x* ${i.nombre} - $${Math.ceil(s / TASA_USD)} USD%0A`; 
+                m += `*${i.cantidad}x* ${i.nombre} - $${s} USD%0A`; 
             });
             let tF = tC;
             if (cuponAplicado && descuento > 0) { 
                 let mD = Math.ceil(tC * (descuento / 100)); 
                 tF = tC - mD; 
-                m += `%0A*${t('wa_descuento')} (${descuento}%):* -$${Math.ceil(mD / TASA_USD)} USD%0A`; 
+                m += `%0A*${t('wa_descuento')} (${descuento}%):* -$${mD} USD%0A`; 
             }
-            m += `%0A*${t('wa_total')}:* $${Math.ceil(tF / TASA_USD)} USD%0A%0A${t('wa_coordinar')}`;
+            m += `%0A*${t('wa_total')}:* $${tF} USD%0A%0A${t('wa_coordinar')}`;
             b.href = canalPedido === 'telegram' && telegramUser ? `https://t.me/${telegramUser}?text=${m}` : `https://wa.me/5352164100?text=${m}`;
         }
         
@@ -532,13 +533,24 @@ async function finalizarPedido(e) {
             if (p) p.existencia -= i.cantidad;
         }
 
-        // 3. Guardar la venta en la base de datos
+        // 3. Guardar la venta en la base de datos (Convertida a CUP para el panel de finanzas)
+        const tasa = TASA_USD || 1;
         const vD = carrito.map(i => { 
             const p = inventario.find(x => x.id === i.id); 
             const c = p ? (p.costo || 0) : 0; 
             let tV = i.venta * i.cantidad; 
             if (cuponAplicado && descuento > 0) tV = tV - Math.ceil(tV * (descuento / 100)); 
-            return { producto: i.nombre, cantidad: i.cantidad, precio_venta: i.venta, costo: c, total_venta: tV, ganancia: tV - (c * i.cantidad), moneda: monedaActual }; 
+            
+            // Guardar en CUP para que el admin no se descuadre
+            return { 
+                producto: i.nombre, 
+                cantidad: i.cantidad, 
+                precio_venta: i.venta * tasa, 
+                costo: c * tasa, 
+                total_venta: tV * tasa, 
+                ganancia: (tV - (c * i.cantidad)) * tasa, 
+                moneda: 'CUP' 
+            }; 
         });
         const { error } = await supabaseClient.from('ventas').insert(vD); 
         if (error) throw error;
